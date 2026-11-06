@@ -40,7 +40,7 @@ export function Receive() {
       ) : (
         <div className="mx-auto grid max-w-3xl gap-5 md:grid-cols-2">
           <Card className="flex flex-col items-center gap-4">
-            <div className="rounded-3xl bg-white p-4 shadow-glow">
+            <div className="rounded-3xl bg-[#ffffff] p-4">
               <QRCodeSVG value={address} size={208} level="M" bgColor="#FFFFFF" fgColor="#070B1F" />
             </div>
             <p className="break-all text-center font-mono text-sm text-slate-200">{address}</p>

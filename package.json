@@ -22,6 +22,8 @@
     "test:tx": "bun run ./scripts/test-tx-lifecycle.ts",
     "test:send": "bun run ./scripts/test-send-reserve.ts",
     "test:account": "bun run ./scripts/test-account-sync.ts",
+    "test:pay": "bun run ./scripts/test-send-via-contract.tsx",
+    "test:theme": "bun run ./scripts/test-theme-contrast.ts",
     "test:ui": "bun run ./scripts/smoke-ui.tsx",
     "test:wallet": "bun run ./scripts/test-wallet-flow.tsx",
     "verify:deployment": "bun run ./scripts/verify-deployment.ts",

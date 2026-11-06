@@ -15,6 +15,8 @@ import { GlobalRegistrator } from '@happy-dom/global-registrator'
 GlobalRegistrator.register({ url: 'http://localhost/send', width: 390, height: 844 })
 const g = globalThis as unknown as Record<string, unknown>
 g.IS_REACT_ACT_ENVIRONMENT = false
+// This file tests the plain-transfer Send path. Paying through your own contract is covered by test-send-via-contract.tsx.
+process.env.VITE_FLUXORA_PAY_ADDRESS = ''
 g.ResizeObserver ??= class { observe() {} unobserve() {} disconnect() {} }
 g.IntersectionObserver ??= class { observe() {} unobserve() {} disconnect() {} takeRecords() { return [] } }
 
@@ -137,7 +139,7 @@ await waitFor(() => text().includes('0x0000…dEaD'))
 check(text().includes('0x0000…dEaD'), 'connected address is shown in the header')
 
 console.log('Connected state is consistent on every page')
-for (const route of ['/', '/swap', '/bridge', '/history', '/receive', '/pay']) {
+for (const route of ['/', '/swap', '/bridge', '/history', '/receive', '/pay', '/settings']) {
   go(route)
   await sleep(500)
   check(text().includes('0x0000…dEaD') && !text().includes('Connect your wallet'), `address shown, no connect prompt on ${route}`)
@@ -353,6 +355,56 @@ console.log('Send flow, wallet on the wrong network at signing time')
   check(await waitFor(() => text().includes('Switch to Arc Mainnet'), 5000), 'clear wrong-network message is shown')
   check(wallet.sent.length === 0, 'nothing was sent to the wallet for the wrong network')
   wallet.chainId = 5042
+}
+
+console.log('Navigation, Back button and theme')
+{
+  go('/')
+  await waitFor(() => text().includes('Total balance'))
+  const navLabels = [...document.querySelectorAll('nav[aria-label="Main"]')].flatMap((n) => [...n.querySelectorAll('button')].map((b) => (b.textContent ?? '').trim()))
+  check(['Send', 'Receive', 'Swap', 'Bridge'].every((l) => navLabels.includes(l)), 'navigation shows Send, Receive, Swap and Bridge', [...new Set(navLabels)].join(', '))
+  check(!navLabels.includes('Pay') && !navLabels.includes('History') && !navLabels.includes('Dashboard'), 'Pay, History and Dashboard are not navigation tabs')
+  check(!document.body.innerHTML.includes('Money flow') && button('Pay') === undefined, 'the dashboard no longer has a Pay action')
+  check(![...document.querySelectorAll('button')].some((b) => (b.textContent ?? '').trim() === 'Back'), 'no Back button on the dashboard')
+
+  // Opened from the dashboard: Back returns to it
+  button('Swap')?.click()
+  await waitFor(() => window.location.pathname === '/swap')
+  const backBtn = () => [...document.querySelectorAll('button')].find((b) => (b.textContent ?? '').trim() === 'Back')
+  await waitFor(() => backBtn() !== undefined)
+  check(backBtn() !== undefined, 'a Back button is on the Swap page')
+  backBtn()?.click()
+  check(await waitFor(() => window.location.pathname === '/'), 'Back from a page opened on the dashboard returns to the dashboard')
+
+  // Opened directly (nothing behind it in this app): Back goes to the dashboard
+  window.history.replaceState(null, '', '/bridge')
+  window.dispatchEvent(new PopStateEvent('popstate'))
+  await waitFor(() => backBtn() !== undefined)
+  backBtn()?.click()
+  check(await waitFor(() => window.location.pathname === '/'), 'Back on a page opened directly goes to the dashboard')
+
+  for (const route of ['/send', '/receive', '/swap', '/bridge', '/history', '/pay']) {
+    go(route)
+    await waitFor(() => backBtn() !== undefined, 4000)
+    check(backBtn() !== undefined, `Back button on ${route}`)
+  }
+  go('/pay')
+  await sleep(500)
+  check(!text().includes('Something went wrong') && document.title.startsWith('Pay'), '/pay still opens from a link')
+
+  // Theme switch in the top bar
+  go('/')
+  await waitFor(() => document.querySelector('[aria-label^="Switch to"]') !== null)
+  const themeBtn = () => document.querySelector('[aria-label^="Switch to"]') as HTMLButtonElement
+  const startMode = document.documentElement.dataset.mode ?? 'dark'
+  themeBtn().click()
+  const flipped = startMode === 'dark' ? 'light' : 'dark'
+  check(document.documentElement.dataset.mode === flipped, `the theme switch changes the mode (${startMode} to ${flipped})`)
+  check(localStorage.getItem('fluxora:theme') === flipped, 'the choice is remembered on this device')
+  await sleep(100)
+  check(themeBtn().getAttribute('aria-label') === `Switch to ${startMode} theme`, 'the switch offers the other theme next')
+  themeBtn().click()
+  check(document.documentElement.dataset.mode === startMode, 'switching again returns to the first theme')
 }
 
 console.log('Disconnect')

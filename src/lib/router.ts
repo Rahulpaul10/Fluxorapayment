@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 
-export type View = 'dashboard' | 'send' | 'receive' | 'swap' | 'bridge' | 'pay' | 'history'
+export type View = 'dashboard' | 'send' | 'receive' | 'swap' | 'bridge' | 'pay' | 'history' | 'settings'
 
 export const VIEW_PATHS: Record<View, string> = {
   dashboard: '/',
@@ -10,12 +10,25 @@ export const VIEW_PATHS: Record<View, string> = {
   bridge: '/bridge',
   pay: '/pay',
   history: '/history',
+  settings: '/settings',
 }
 
 function viewFromPath(pathname: string): View {
   const clean = pathname.replace(/\/+$/, '') || '/'
   const hit = (Object.entries(VIEW_PATHS) as [View, string][]).find(([, p]) => p === clean)
   return hit ? hit[0] : 'dashboard'
+}
+
+/** How many in-app pages sit behind the current one (0 on the first page of a visit). */
+function appHistoryIndex(): number {
+  const state = window.history.state as { fxIdx?: unknown } | null
+  return typeof state?.fxIdx === 'number' ? state.fxIdx : 0
+}
+
+/** Go back one page inside the app, or to the dashboard when this is the first page the visitor opened. */
+export function goBack(navigate: (view: View) => void): void {
+  if (appHistoryIndex() > 0) window.history.back()
+  else navigate('dashboard')
 }
 
 /** Minimal path router. Shareable state (payment links) lives in the path and query, never the hash. */
@@ -30,7 +43,8 @@ export function useRoute() {
 
   const navigate = useCallback((view: View, search = '') => {
     const url = VIEW_PATHS[view] + search
-    window.history.pushState(null, '', url)
+    // Remember how deep we are in this app's own history, so "Back" knows whether there is a page to go back to.
+    window.history.pushState({ fxIdx: appHistoryIndex() + 1 }, '', url)
     setLoc({ view, search })
     window.scrollTo({ top: 0 })
   }, [])

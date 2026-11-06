@@ -29,6 +29,7 @@ Project memory for future agents. FLUXORA is a DeFi wallet on Arc mainnet (chain
 
 - Contracts: written, reviewed three rounds, tested. The original token and payments contracts are not deployed (no addresses yet).
 - Deployed on Arc Testnet (chain 5042002): `contracts/FluxoraPay.sol` (ownerless USDC payment contract) at `0x057117bc905633af66c832e7e8666db20c7f2d9a`, constructor `usdc_` = `0x3600000000000000000000000000000000000000`. Not audited by a human. `contracts/Fluxora.sol` (escrow) and `contracts/FluxoraPayments.sol` are written but not deployed.
+- Deployed by the owner on Arc mainnet (chain 5042) from Remix: `contracts/FluxoraPay.sol` at `0x4b986094f0258b83ef82cc866aB5c654FcFa52e1` (bytecode matches the repo source compiled without optimization). Send pays USDC through it when `VITE_FLUXORA_PAY_ADDRESS` is set (approve exact amount, then `pay`).
 - Performance: pages are lazy chunks listed once in `src/lib/viewLoaders.ts` and prefetched on idle and on nav hover/touch. The Circle bridge kit loads on demand through `src/lib/bridgeKit.ts` (never import it at module level). `App.tsx` keeps always-on services (wallet warmup, pending reconciler) outside the keyed page wrapper, so navigation does not restart them. Dashboard charts are a separate chunk (`DashboardCharts.tsx`). Do not add `placeholderData` to queries keyed by wallet address.
 - Swap uses Uniswap Universal Router 2.1.2 on Arc through Permit2. Bridge uses Circle App Kit (CCTP) with the forwarding service.
 

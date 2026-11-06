@@ -31,7 +31,7 @@ export function ConnectPanel() {
               }}
               className="lift glass-inner group relative flex min-h-[88px] items-center gap-4 overflow-hidden rounded-2xl p-4 text-left disabled:opacity-60"
             >
-              <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl text-white shadow-glow" style={{ background: 'linear-gradient(135deg,#FF8A3D,#FF55B8)' }}>
+              <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl text-[#ffffff]" style={{ background: 'linear-gradient(135deg,#FF8A3D,#FF55B8)' }}>
                 <Wallet size={22} />
               </span>
               <span className="min-w-0">
@@ -44,7 +44,7 @@ export function ConnectPanel() {
               aria-disabled={!walletConnectEnabled}
               className="lift glass-inner group relative flex min-h-[88px] items-center gap-4 overflow-hidden rounded-2xl p-4 text-left aria-disabled:opacity-60"
             >
-              <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl text-white shadow-cyan" style={{ background: 'linear-gradient(135deg,#27D9FF,#8257FF)' }}>
+              <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl text-[#ffffff]" style={{ background: 'linear-gradient(135deg,#27D9FF,#8257FF)' }}>
                 <QrCode size={22} />
               </span>
               <span className="min-w-0">

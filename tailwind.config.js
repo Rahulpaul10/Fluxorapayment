@@ -1,20 +1,19 @@
 /** @type {import('tailwindcss').Config} */
+// Neutral colors come from CSS variables (see src/index.css), so one class works in both the dark and light theme.
+const v = (name) => `rgb(var(--${name}) / <alpha-value>)`
+
 export default {
   content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}'],
   theme: {
     extend: {
       colors: {
         // FLUXORA palette
+        white: v('fg'),
+        slate: { 100: v('s100'), 200: v('s200'), 300: v('s300'), 400: v('s400'), 500: v('s500'), 600: v('s600') },
         volt: '#8257FF',
         neon: '#27D9FF',
         flux: { pink: '#FF55B8', green: '#20D6A0' },
-        navy: {
-          950: '#060916',
-          900: '#090D1C',
-          800: '#141A2E',
-          700: '#1B2340',
-          600: '#252F55',
-        },
+        navy: { 950: v('n950'), 900: v('n900'), 800: v('n800'), 700: v('n700'), 600: v('n600') },
         cyan: { neon: '#27D9FF' },
       },
       fontFamily: {
@@ -23,10 +22,10 @@ export default {
         mono: ['"JetBrains Mono"', 'Menlo', 'monospace'],
       },
       boxShadow: {
-        glow: '0 0 44px -8px rgba(130,87,255,0.6)',
-        cyan: '0 0 34px -8px rgba(39,217,255,0.5)',
-        pink: '0 0 34px -8px rgba(255,85,184,0.5)',
-        card: '0 18px 50px -24px rgba(0,0,0,0.8)',
+        glow: 'none',
+        cyan: 'none',
+        pink: 'none',
+        card: '0 12px 32px -16px rgba(0,0,0,0.45)',
       },
       keyframes: {
         drift1: { '0%,100%': { transform: 'translate3d(0,0,0) scale(1)' }, '50%': { transform: 'translate3d(6%,8%,0) scale(1.12)' } },

@@ -191,7 +191,7 @@ export function RequestTab() {
 
             {link && (
               <div className="flex flex-col items-center gap-3 rounded-2xl bg-white/5 p-4">
-                <div className="rounded-2xl bg-white p-3"><QRCodeSVG value={link} size={176} level="M" fgColor="#070B1F" /></div>
+                <div className="rounded-2xl bg-[#ffffff] p-3"><QRCodeSVG value={link} size={176} level="M" fgColor="#070B1F" /></div>
                 <p className="break-all text-center font-mono text-xs text-slate-300">{link}</p>
                 <div className="grid w-full grid-cols-2 gap-2">
                   <CopyButton value={link} label="Copy link" />

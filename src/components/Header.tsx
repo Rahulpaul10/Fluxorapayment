@@ -2,12 +2,13 @@ import { useEffect, useRef, useState, type ReactNode } from 'react'
 import clsx from 'clsx'
 import { ConnectKitButton } from 'connectkit'
 import { useAccount, useDisconnect, useSwitchChain } from 'wagmi'
-import { AlertTriangle, Check, ChevronDown, Copy, ExternalLink, LogOut, Plug } from 'lucide-react'
+import { AlertTriangle, Check, ChevronDown, Copy, ExternalLink, LogOut, Plug, Settings } from 'lucide-react'
 import { toast } from 'sonner'
 import { NETWORKS, networkById, ARC_CHAIN_ID, asChainId, explorerAddress, isSupportedChain } from '@/config/networks'
 import { shortAddr } from '@/lib/format'
 import { ConnectionStatus } from './ConnectionStatus'
 import { Wordmark } from './Logo'
+import { ThemeToggle } from './ThemeToggle'
 
 function useDismiss(open: boolean, close: () => void) {
   const ref = useRef<HTMLDivElement>(null)
@@ -43,7 +44,7 @@ function Menu({ trigger, children, open, setOpen, align = 'right' }: { trigger: 
       {open && (
         <div
           role="menu"
-          className={clsx('glass absolute top-[calc(100%+8px)] z-50 w-64 animate-rise rounded-2xl p-2 shadow-card', align === 'right' ? 'right-0' : 'left-0')}
+          className={clsx('glass absolute top-[calc(100%+8px)] z-50 w-64 animate-rise rounded-2xl bg-navy-800 p-2 shadow-card', align === 'right' ? 'right-0' : 'left-0')}
         >
           {children}
         </div>
@@ -183,17 +184,28 @@ function WalletMenu() {
   )
 }
 
-export function Header() {
+export function Header({ onHome, onSettings, settingsActive }: { onHome?: () => void; onSettings?: () => void; settingsActive?: boolean }) {
   return (
-    <header className="sticky top-0 z-40 border-b border-white/5 bg-navy-900/70 backdrop-blur-xl">
-      <div className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-3 px-4 lg:px-8">
-        <span className="shrink-0 lg:invisible" aria-label="FLUXORA">
+    <header className="sticky top-0 z-40 border-b border-white/5 bg-navy-900">
+      <div className="mx-auto flex h-16 max-w-5xl items-center justify-between gap-3 px-4 lg:px-8">
+        <button type="button" onClick={onHome} className="shrink-0 lg:invisible" aria-label="FLUXORA home">
           {/* Narrow phones show the symbol only, so the wallet button always fits */}
           <Wordmark size={32} textClassName="max-[459px]:hidden" />
-        </span>
+        </button>
         <div className="flex min-w-0 items-center gap-1.5 sm:gap-2">
           <ConnectionStatus />
           <NetworkSelector />
+          <ThemeToggle />
+          <button
+            type="button"
+            onClick={onSettings}
+            aria-label="Settings"
+            title="Settings"
+            aria-current={settingsActive ? 'page' : undefined}
+            className={clsx('glass flex min-h-[44px] min-w-[44px] items-center justify-center rounded-2xl transition-colors hover:text-white', settingsActive ? 'text-[var(--a)]' : 'text-slate-300')}
+          >
+            <Settings size={18} />
+          </button>
           <WalletMenu />
         </div>
       </div>

@@ -9,6 +9,7 @@ import { Amount } from '@/onchain-money'
 import { useTokenBalances } from '@/hooks/useBalances'
 import { ARC_TOKENS, USDC, type TokenInfo } from '@/lib/tokens'
 import { ARC_CHAIN_ID, explorerAddress } from '@/config/networks'
+import { FLUXORA_PAY_ADDRESS, MAX_MEMO_BYTES, fluxoraPayAbi, memoByteLength, payGasFallback } from '@/config/fluxoraPay'
 import { arcGasCostUsdc, fmtGasUsdc, getFees, prepaidGasReserveUsdc } from '@/lib/fees'
 import { checkSend, maxSendable } from '@/lib/sendReserve'
 import { verifySender } from '@/lib/accountSync'
@@ -41,7 +42,11 @@ export function Send({ presetTo, presetAmount, presetToken }: { presetTo?: strin
     <>
       <PageTitle
         title="Send"
-        subtitle="Send USDC or any supported token on Arc. On Arc, USDC is the native asset, so it is sent with a standard token transfer."
+        subtitle={
+          FLUXORA_PAY_ADDRESS
+            ? 'Send USDC through your own FLUXORA Pay contract, or any supported token with a standard transfer.'
+            : 'Send USDC or any supported token on Arc. On Arc, USDC is the native asset, so it is sent with a standard token transfer.'
+        }
       />
       <ArcGate feature="Send">
         <SendForm presetTo={presetTo} presetAmount={presetAmount} presetToken={presetToken} />
@@ -68,11 +73,19 @@ function SendForm({ presetTo, presetAmount, presetToken }: { presetTo?: string; 
   const [hash, setHash] = useState<Hex>()
   const [error, setError] = useState<string>()
   const [hint, setHint] = useState<string>()
+  const [memo, setMemo] = useState('')
+  const [phase, setPhase] = useState<'approve' | 'pay' | 'pay-after-approve'>()
 
   const row = balances.rows.find((r) => r.token.symbol === symbol) ?? balances.rows[0]
   const token: TokenInfo = row.token
   const usdcRow = balances.rows.find((r) => r.token.symbol === 'USDC')
   const balance = row.raw
+
+  // USDC goes through your own FluxoraPay contract when its address is configured; every other token is a plain transfer.
+  const payAddr = FLUXORA_PAY_ADDRESS
+  const viaPay = Boolean(payAddr) && token.address.toLowerCase() === USDC.address.toLowerCase()
+  const note = memo.trim()
+  const noteBytes = memoByteLength(note)
 
   // What the gas estimate is priced on: the real recipient and amount once they are valid and affordable, otherwise a
   // placeholder recipient and 1 unit. Never a transfer to yourself, which costs less than a transfer to another account.
@@ -88,31 +101,60 @@ function SendForm({ presetTo, presetAmount, presetToken }: { presetTo?: string; 
   })()
   const estimateTo = useDebounced(draftRecipient ?? ESTIMATE_RECIPIENT, 300)
   const estimateAmount = useDebounced(draftRaw !== undefined && balance !== undefined && draftRaw <= balance ? draftRaw : 1n, 300)
+  const estimateNote = useDebounced(note, 300)
 
-  // Real gas estimate for the ERC-20 transfer, priced in USDC. `reserve` is the USDC the chain takes up front
-  // (estimate x the wallet's gas multiplier x max fee, rounded up) and is what must stay in the account.
+  // How much USDC the FluxoraPay contract may already pull from this account. Without enough, an approval comes first.
+  const allowanceQ = useQuery({
+    queryKey: ['send-allowance', address, payAddr],
+    enabled: Boolean(client && address && viaPay && payAddr),
+    refetchInterval: 15_000,
+    queryFn: () => {
+      if (!client || !address || !payAddr) throw new Error('no client')
+      return client.readContract({ address: token.address, abi: erc20Abi, functionName: 'allowance', args: [address, payAddr] })
+    },
+  })
+  const allowance = allowanceQ.data
+
+  // Real gas estimate, priced in USDC. For a plain transfer that is the transfer itself. Through FluxoraPay it is the
+  // approval (when one is needed) plus the payment. `reserve` is the USDC the chain takes up front (estimate x the
+  // wallet's gas multiplier x max fee, rounded up) and is what must stay in the account.
   const gas = useQuery({
-    queryKey: ['send-gas', address, token.address, estimateTo, estimateAmount.toString()],
-    enabled: Boolean(client && address),
+    queryKey: ['send-gas', address, token.address, estimateTo, estimateAmount.toString(), viaPay ? `${payAddr}:${allowance}:${estimateNote}` : 'plain'],
+    enabled: Boolean(client && address) && (!viaPay || allowance !== undefined),
     refetchInterval: 30_000,
     queryFn: async () => {
       if (!client || !address) throw new Error('no client')
-      const [units, fees] = await Promise.all([
-        client.estimateContractGas({ account: address, address: token.address, abi: erc20Abi, functionName: 'transfer', args: [estimateTo, estimateAmount] }),
-        getFees(client, ARC_CHAIN_ID),
-      ])
-      return { units, fees, cost: arcGasCostUsdc(units, fees.maxFeePerGas), reserve: prepaidGasReserveUsdc(units, fees.maxFeePerGas) }
+      const feesP = getFees(client, ARC_CHAIN_ID)
+      feesP.catch(() => undefined) // awaited below; this only stops an early estimate failure leaving it unhandled
+      let units: bigint
+      let needsApproval = false
+      if (viaPay && payAddr && allowance !== undefined) {
+        needsApproval = allowance < estimateAmount
+        if (needsApproval) {
+          // The payment cannot be simulated until the approval is mined, so it is priced from a measured constant.
+          const approveUnits = await client.estimateContractGas({ account: address, address: token.address, abi: erc20Abi, functionName: 'approve', args: [payAddr, estimateAmount] })
+          units = approveUnits + payGasFallback(memoByteLength(estimateNote))
+        } else {
+          units = await client.estimateContractGas({ account: address, address: payAddr, abi: fluxoraPayAbi, functionName: 'pay', args: [estimateTo, estimateAmount, estimateNote] })
+        }
+      } else {
+        units = await client.estimateContractGas({ account: address, address: token.address, abi: erc20Abi, functionName: 'transfer', args: [estimateTo, estimateAmount] })
+      }
+      const fees = await feesP
+      return { units, fees, needsApproval, cost: arcGasCostUsdc(units, fees.maxFeePerGas), reserve: prepaidGasReserveUsdc(units, fees.maxFeePerGas) }
     },
   })
 
   const check = (() => {
-    const result: { recipient?: Address; raw?: bigint; toError?: string; amountError?: string; warn?: string } = {}
+    const result: { recipient?: Address; raw?: bigint; toError?: string; amountError?: string; noteError?: string; warn?: string } = {}
     const t = to.trim()
+    if (viaPay && noteBytes > MAX_MEMO_BYTES) result.noteError = `The note is ${noteBytes} bytes. The limit is ${MAX_MEMO_BYTES} bytes (some characters use more than one).`
     if (t) {
       if (!isAddress(t)) result.toError = 'Enter a valid 0x wallet address.'
       else {
         const lower = t.toLowerCase()
         if (lower === zeroAddress) result.toError = 'Sending to the zero address is not allowed on Arc.'
+        else if (payAddr && lower === payAddr.toLowerCase()) result.toError = 'That is your FLUXORA Pay contract. It cannot receive payments.'
         else if (lower === NATIVE_SENTINEL || lower === SYSTEM_EMITTER) result.toError = 'That is a system address, not a wallet.'
         else if (ARC_TOKENS.some((x) => x.address.toLowerCase() === lower))
           result.toError = 'That is a token contract. Tokens sent to it would be lost.'
@@ -150,7 +192,7 @@ function SendForm({ presetTo, presetAmount, presetToken }: { presetTo?: string; 
     return result
   })()
 
-  const ready = Boolean(check.recipient && check.raw && !check.toError && !check.amountError)
+  const ready = Boolean(check.recipient && check.raw && !check.toError && !check.amountError && !check.noteError)
 
   const setMax = () => {
     if (balance === undefined) return
@@ -173,17 +215,36 @@ function SendForm({ presetTo, presetAmount, presetToken }: { presetTo?: string; 
     setBusy(true)
     setError(undefined)
     try {
-      // The guarded wallet estimates gas first (a call that would revert never reaches the wallet) and attaches fees
-      const h = await writeContractAsync({
-        chainId: ARC_CHAIN_ID,
-        // The same account whose balance was checked on this page. The guard refuses the request if the wallet is
-        // on a different account, so the sender can never silently differ from the one shown.
-        account: address,
-        address: token.address,
-        abi: erc20Abi,
-        functionName: 'transfer',
-        args: [check.recipient, check.raw],
-      })
+      let h: Hex
+      if (viaPay && payAddr) {
+        // Through your FluxoraPay contract. It pulls USDC with transferFrom, so it needs an allowance first. Read it fresh:
+        // the allowance the page showed may be a few seconds old.
+        const current = await client.readContract({ address: token.address, abi: erc20Abi, functionName: 'allowance', args: [address, payAddr] })
+        if (current < check.raw) {
+          setPhase('approve')
+          // Approve exactly this payment, no more. The guard refuses the request if the wallet is on another account.
+          const approveHash = await writeContractAsync({ chainId: ARC_CHAIN_ID, account: address, address: token.address, abi: erc20Abi, functionName: 'approve', args: [payAddr, check.raw] })
+          recordActivity({ hash: approveHash, kind: 'approve', chainId: ARC_CHAIN_ID, account: address, summary: `Approved ${fmtToken(check.raw, token.decimals, 4)} ${token.symbol} for FLUXORA Pay` })
+          // The payment is simulated against the chain, so the approval must be mined before it can be requested.
+          const receipt = await client.waitForTransactionReceipt({ hash: approveHash, timeout: 120_000 })
+          if (receipt.status !== 'success') throw new Error('The approval failed onchain, so nothing was paid.')
+          void allowanceQ.refetch()
+          setPhase('pay-after-approve')
+        } else setPhase('pay')
+        h = await writeContractAsync({ chainId: ARC_CHAIN_ID, account: address, address: payAddr, abi: fluxoraPayAbi, functionName: 'pay', args: [check.recipient, check.raw, note] })
+      } else {
+        // The guarded wallet estimates gas first (a call that would revert never reaches the wallet).
+        h = await writeContractAsync({
+          chainId: ARC_CHAIN_ID,
+          // The same account whose balance was checked on this page. The guard refuses the request if the wallet is
+          // on a different account, so the sender can never silently differ from the one shown.
+          account: address,
+          address: token.address,
+          abi: erc20Abi,
+          functionName: 'transfer',
+          args: [check.recipient, check.raw],
+        })
+      }
       setHash(h)
       // Read the transaction back: if the wallet signed from another account than the one shown, say so loudly.
       void verifySender(client, h, address).then((v) => {
@@ -196,7 +257,7 @@ function SendForm({ presetTo, presetAmount, presetToken }: { presetTo?: string; 
         kind: 'send',
         chainId: ARC_CHAIN_ID,
         account: address,
-        summary: `Sent ${fmtToken(check.raw, token.decimals, 4)} ${token.symbol} to ${shortAddr(check.recipient)}`,
+        summary: `Sent ${fmtToken(check.raw, token.decimals, 4)} ${token.symbol} to ${shortAddr(check.recipient)}${viaPay ? ' via FLUXORA Pay' : ''}`,
       })
     } catch (e) {
       const parsed = parseTxError(e)
@@ -204,6 +265,7 @@ function SendForm({ presetTo, presetAmount, presetToken }: { presetTo?: string; 
       else setError(parsed.message)
     } finally {
       setBusy(false)
+      setPhase(undefined)
     }
   }
 
@@ -218,6 +280,7 @@ function SendForm({ presetTo, presetAmount, presetToken }: { presetTo?: string; 
             setStep('edit')
             setAmount('')
             setTo('')
+            setMemo('')
           }}
         >
           Send another
@@ -273,7 +336,25 @@ function SendForm({ presetTo, presetAmount, presetToken }: { presetTo?: string; 
             {(check.amountError ?? hint) && <p className="mt-1.5 text-sm text-flux-pink">{check.amountError ?? hint}</p>}
           </div>
 
+          {viaPay && (
+            <div>
+              <label className="label" htmlFor="memo">
+                Note (optional, public onchain)
+              </label>
+              <input
+                id="memo"
+                className="field mt-2 text-sm"
+                placeholder="What is this payment for?"
+                value={memo}
+                onChange={(e) => setMemo(e.target.value)}
+                autoComplete="off"
+              />
+              {check.noteError && <p className="mt-1.5 text-sm text-flux-pink">{check.noteError}</p>}
+            </div>
+          )}
+
           <Row label="From" value={address ? shortAddr(address) : ''} mono />
+          {viaPay && payAddr && <Row label="Paid through" value={`FLUXORA Pay ${shortAddr(payAddr)}`} mono />}
           <Row
             label="Network fee (estimate)"
             value={gas.data ? `${fmtGasUsdc(gas.data.cost)} USDC` : gas.isLoading ? <Spinner /> : 'Unavailable'}
@@ -299,6 +380,9 @@ function SendForm({ presetTo, presetAmount, presetToken }: { presetTo?: string; 
             <Row label="Network" value="Arc mainnet" />
             <Row label="From" value={address ? shortAddr(address) : ''} mono />
             <Row label="To" value={check.recipient ? shortAddr(check.recipient, 10, 8) : ''} mono />
+            {viaPay && payAddr && <Row label="Paid through" value={`FLUXORA Pay ${shortAddr(payAddr, 10, 8)}`} mono />}
+            {viaPay && note && <Row label="Note" value={note} />}
+            {viaPay && <Row label="Wallet prompts" value={gas.data?.needsApproval ? '2: approve, then pay' : '1: pay'} />}
             <Row label="Network fee (estimate)" value={gas.data ? `${fmtGasUsdc(gas.data.cost)} USDC` : '—'} />
           </div>
           {check.recipient && <ExplorerLink href={explorerAddress(ARC_CHAIN_ID, check.recipient)}>Inspect recipient</ExplorerLink>}
@@ -307,7 +391,7 @@ function SendForm({ presetTo, presetAmount, presetToken }: { presetTo?: string; 
           <button className="btn-primary w-full" disabled={busy} onClick={() => void submit()}>
             {busy ? (
               <>
-                <Spinner /> Confirm in your wallet…
+                <Spinner /> {phase === 'approve' ? 'Step 1 of 2: approve in your wallet…' : phase === 'pay-after-approve' ? 'Step 2 of 2: confirm the payment…' : 'Confirm in your wallet…'}
               </>
             ) : (
               <>

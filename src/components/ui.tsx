@@ -1,39 +1,20 @@
 import { useState, type ReactNode } from 'react'
-import { motion } from 'framer-motion'
 import { AlertTriangle, Check, Copy, ExternalLink, Info, Loader2 } from 'lucide-react'
 import { TokenEURC, TokenETH, TokenUSDC } from '@web3icons/react'
 import clsx from 'clsx'
 import { toast } from 'sonner'
 import type { TokenInfo } from '@/lib/tokens'
-import { VIEW_THEMES, useView } from '@/lib/theme'
 
 export function Card({ children, className }: { children: ReactNode; className?: string }) {
-  return (
-    <motion.section
-      initial={{ opacity: 0, y: 10 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ type: 'spring', stiffness: 260, damping: 28 }}
-      className={clsx('glass rounded-[28px] p-5 sm:p-6', className)}
-    >
-      {children}
-    </motion.section>
-  )
+  return <section className={clsx('glass rounded-3xl p-5 sm:p-6', className)}>{children}</section>
 }
 
 export function PageTitle({ title, subtitle, right }: { title: string; subtitle?: string; right?: ReactNode }) {
-  const view = useView()
-  const theme = VIEW_THEMES[view]
-  const Icon = theme.icon
   return (
-    <div className="animate-rise mb-6 flex flex-wrap items-center justify-between gap-4">
-      <div className="flex min-w-0 items-center gap-4">
-        <span className="theme-chip flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl shadow-glow">
-          <Icon size={26} strokeWidth={2.2} />
-        </span>
-        <div className="min-w-0">
-          <h1 className="theme-text font-display text-3xl font-bold tracking-[-0.03em] sm:text-4xl">{title}</h1>
-          {subtitle && <p className="mt-1 max-w-prose text-pretty text-sm text-slate-400">{subtitle}</p>}
-        </div>
+    <div className="mb-5 flex flex-wrap items-end justify-between gap-3">
+      <div className="min-w-0">
+        <h1 className="font-display text-2xl font-bold tracking-[-0.02em] text-white sm:text-3xl">{title}</h1>
+        {subtitle && <p className="mt-1 max-w-prose text-pretty text-sm text-slate-400">{subtitle}</p>}
       </div>
       {right}
     </div>
@@ -42,10 +23,10 @@ export function PageTitle({ title, subtitle, right }: { title: string; subtitle?
 
 type NoticeTone = 'info' | 'warn' | 'error' | 'success'
 const toneStyles: Record<NoticeTone, string> = {
-  info: 'border-neon/30 bg-neon/10 text-cyan-50',
-  warn: 'border-amber-300/30 bg-amber-300/10 text-amber-50',
-  error: 'border-flux-pink/40 bg-flux-pink/10 text-pink-50',
-  success: 'border-flux-green/40 bg-flux-green/10 text-emerald-50',
+  info: 'border-neon/30 bg-neon/10 text-white',
+  warn: 'border-amber-300/30 bg-amber-300/10 text-white',
+  error: 'border-flux-pink/40 bg-flux-pink/10 text-white',
+  success: 'border-flux-green/40 bg-flux-green/10 text-white',
 }
 
 export function Notice({ tone = 'info', children, action }: { tone?: NoticeTone; children: ReactNode; action?: ReactNode }) {
@@ -65,7 +46,7 @@ export function TokenIcon({ token, size = 32 }: { token: Pick<TokenInfo, 'symbol
   if (token.symbol === 'WETH') return <TokenETH variant="branded" size={size} />
   return (
     <span
-      className="inline-flex shrink-0 items-center justify-center rounded-full font-display text-xs font-bold text-white"
+      className="inline-flex shrink-0 items-center justify-center rounded-full font-display text-xs font-bold text-[#ffffff]"
       style={{ width: size, height: size, background: `linear-gradient(135deg, ${token.color}, #0B1230)` }}
     >
       {token.symbol.slice(0, 2).toUpperCase()}
@@ -142,7 +123,7 @@ export function Segmented<T extends string>({
           onClick={() => onChange(o.value)}
           className={clsx(
             'min-h-[42px] flex-1 rounded-xl px-3 text-sm font-semibold transition',
-            value === o.value ? 'theme-chip shadow-glow' : 'text-slate-400 hover:text-white',
+            value === o.value ? 'theme-chip' : 'text-slate-400 hover:text-white',
           )}
         >
           {o.label}

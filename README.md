@@ -19,6 +19,7 @@ Built with [Arc Studio](https://studio.arc.io)
 | Pay: payment links and QR codes | Live |
 | Pay: onchain requests and receipts | Needs your deployment ("Contract Not Deployed" until then) |
 | History with search and filters | Live; scans recent Arc blocks, "Load older" goes further back |
+| Settings (gear in the top bar): your FluxoraPay contract name, address, explorer link and live onchain status | Live; shows "not set" until `VITE_FLUXORA_PAY_ADDRESS` is configured |
 
 Mainnet moves real funds and transactions cannot be reversed. Nothing in this project is simulated or faked.
 
@@ -43,6 +44,8 @@ forge test                  # contract tests
 bun run test:tx             # transaction tracker tests (no network)
 bun run test:send           # Send gas reserve: Max, near-full-balance and insufficient-balance rules (no network)
 bun run test:account        # wallet account consistency: shown account, transaction sender and wallet account must match (no network)
+bun run test:theme          # light theme readability: contrast of every text, badge and card color (no browser)
+bun run test:pay            # Send through your own FluxoraPay contract: approval, then payment, with a fake wallet
 bun run test:ui             # renders every page with a read-only test wallet against live Arc RPC
 bun run test:wallet         # fake-wallet Send flow, account/network switching, duplicate-click guard
 bun run gen:abis            # after changing contracts: refresh the app's ABIs
@@ -57,6 +60,7 @@ All public. Full list and meaning in [`.env.example`](.env.example) and [`docs/C
 - `VITE_ARC_RPC_URL`, `VITE_ARC_EXPLORER_URL`, `VITE_RPC_URL_<chainId>`, `VITE_EXPLORER_URL_<chainId>` (optional) network overrides
 - `VITE_FLUXORA_TOKEN_ADDRESS`, `VITE_FLUXORA_PAYMENTS_ADDRESS` set after you deploy
 - `VITE_FLUXORA_DEPLOY_BLOCK` (optional)
+- `VITE_FLUXORA_PAY_ADDRESS` (optional) your own FluxoraPay payment contract on Arc mainnet. When set, Send pays USDC through it; when empty, Send makes a plain USDC transfer
 
 ## Documentation
 

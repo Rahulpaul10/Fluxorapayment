@@ -18,6 +18,7 @@ const Swap = lazy(viewLoaders.swap)
 const Bridge = lazy(viewLoaders.bridge)
 const Pay = lazy(viewLoaders.pay)
 const History = lazy(viewLoaders.history)
+const Settings = lazy(viewLoaders.settings)
 
 type RouteView = ReturnType<typeof useRoute>
 
@@ -32,6 +33,7 @@ const Outlet = memo(function Outlet({ view, params, navigate }: Pick<RouteView, 
       {view === 'bridge' && <Bridge />}
       {view === 'pay' && <Pay params={params} navigate={navigate} />}
       {view === 'history' && <History />}
+      {view === 'settings' && <Settings />}
     </>
   )
 })
@@ -45,7 +47,7 @@ export default function App() {
   const switching = shownView !== view
 
   useEffect(() => {
-    const titles: Record<string, string> = { dashboard: 'Dashboard', send: 'Send', receive: 'Receive', swap: 'Swap', bridge: 'Bridge', pay: 'Pay', history: 'History' }
+    const titles: Record<string, string> = { dashboard: 'Dashboard', send: 'Send', receive: 'Receive', swap: 'Swap', bridge: 'Bridge', pay: 'Pay', history: 'History', settings: 'Settings' }
     document.title = `${titles[view]} · FLUXORA`
   }, [view])
 
