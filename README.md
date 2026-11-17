@@ -11,7 +11,9 @@ Built with [Arc Studio](https://studio.arc.io)
 | Feature | Status |
 | --- | --- |
 | Wallet connection (MetaMask, WalletConnect with a project id), network switching, RPC status | Live |
-| Dashboard: balances, live USDC valuation, allocation and money-flow charts, recent activity | Live, real chain data |
+| Dashboard: total balance, wallet identity with Copy and QR, asset cards with Send, Swap and Bridge shortcuts, Arc Network status (block, gas token), Gas Insight from your real receipts, activity timeline, Explore Arc links | Live, real chain data |
+| Transaction details, Bridge history (CCTP, verified against Circle and the destination chain), Analytics, Address book, History filters, Onchain details switch (Settings) | Live, real chain data |
+| Asset page: balance, USD value, contract address, token activity, Arc Explorer link | Live, real chain data |
 | Send USDC and supported tokens with address and amount validation, preview, wallet signing, receipt tracking | Live |
 | Receive: address, QR code, copy and share | Live |
 | Swap through Uniswap pools on Arc with live quotes, slippage and minimum received | Live for USDC/EURC, USDC/WETH, USDC/cirBTC and WETH/cirBTC (existing Arc tokens, no FLUXORA token needed). Other pairs say that no pool exists |
@@ -44,6 +46,12 @@ forge test                  # contract tests
 bun run test:tx             # transaction tracker tests (no network)
 bun run test:send           # Send gas reserve: Max, near-full-balance and insufficient-balance rules (no network)
 bun run test:account        # wallet account consistency: shown account, transaction sender and wallet account must match (no network)
+bun run test:bridge         # bridge fee math, failure explanations, Retry gate and CCTP configuration (reads Arc)
+bun run test:bridge-ui      # the Bridge page with a stand-in for Circle's kit: small amounts, failures, Retry
+bun run test:cctp-fees     # Arc to Ethereum quote flow checked against Circle's fee service (read only, sends nothing)
+bun run test:production     # address book, filters, tx details and CCTP status rules (no network)
+bun run test:features       # receive, settings, send picker, tx details, bridge history, analytics against real Arc data (fake wallet)
+bun run test:dashboard      # the dashboard and asset pages against real Arc reads (fake wallet, nothing sent)
 bun run test:theme          # light theme readability: contrast of every text, badge and card color (no browser)
 bun run test:pay            # Send through your own FluxoraPay contract: approval, then payment, with a fake wallet
 bun run test:ui             # renders every page with a read-only test wallet against live Arc RPC

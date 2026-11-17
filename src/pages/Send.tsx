@@ -16,6 +16,8 @@ import { verifySender } from '@/lib/accountSync'
 import { fmtToken, shortAddr } from '@/lib/format'
 import { parseTxError } from '@/lib/errors'
 import { recordActivity } from '@/lib/activity'
+import { useSingleFlight } from '@/hooks/useSingleFlight'
+import { AddressBookPicker } from '@/components/AddressBookParts'
 import { ArcGate } from '@/components/Gate'
 import { TokenButton, TokenPicker } from '@/components/TokenSelect'
 import { WalletSpeedTest } from '@/components/WalletSpeedTest'
@@ -70,6 +72,7 @@ function SendForm({ presetTo, presetAmount, presetToken }: { presetTo?: string; 
   const [picker, setPicker] = useState(false)
   const [step, setStep] = useState<'edit' | 'review'>('edit')
   const [busy, setBusy] = useState(false)
+  const once = useSingleFlight()
   const [hash, setHash] = useState<Hex>()
   const [error, setError] = useState<string>()
   const [hint, setHint] = useState<string>()
@@ -306,6 +309,7 @@ function SendForm({ presetTo, presetAmount, presetToken }: { presetTo?: string; 
               spellCheck={false}
               autoComplete="off"
             />
+            <AddressBookPicker value={to} onPick={(a) => setTo(a)} />
             {check.toError && <p className="mt-1.5 text-sm text-flux-pink">{check.toError}</p>}
             {check.warn && <p className="mt-1.5 text-sm text-amber-300">{check.warn}</p>}
           </div>
@@ -383,12 +387,24 @@ function SendForm({ presetTo, presetAmount, presetToken }: { presetTo?: string; 
             {viaPay && payAddr && <Row label="Paid through" value={`FLUXORA Pay ${shortAddr(payAddr, 10, 8)}`} mono />}
             {viaPay && note && <Row label="Note" value={note} />}
             {viaPay && <Row label="Wallet prompts" value={gas.data?.needsApproval ? '2: approve, then pay' : '1: pay'} />}
+            <Row label="Amount" value={check.raw ? `${fmtToken(check.raw, token.decimals, token.decimals)} ${token.symbol}` : ''} />
             <Row label="Network fee (estimate)" value={gas.data ? `${fmtGasUsdc(gas.data.cost)} USDC` : '—'} />
+            <Row
+              label="Total"
+              value={
+                !check.raw || !gas.data
+                  ? '—'
+                  : token.symbol === 'USDC'
+                    ? `${fmtToken(check.raw + gas.data.cost.raw, 6, 6)} USDC`
+                    : `${fmtToken(check.raw, token.decimals, token.decimals)} ${token.symbol} + ${fmtGasUsdc(gas.data.cost)} USDC`
+              }
+            />
+            <Row label="Recipient receives" value={check.raw ? `${fmtToken(check.raw, token.decimals, token.decimals)} ${token.symbol}` : ''} />
           </div>
           {check.recipient && <ExplorerLink href={explorerAddress(ARC_CHAIN_ID, check.recipient)}>Inspect recipient</ExplorerLink>}
           <Notice tone="warn">Transfers on Arc mainnet are final. Check the address character by character before you confirm.</Notice>
           {error && <Notice tone="error">{error}</Notice>}
-          <button className="btn-primary w-full" disabled={busy} onClick={() => void submit()}>
+          <button className="btn-primary w-full" disabled={busy} onClick={() => void once(submit)}>
             {busy ? (
               <>
                 <Spinner /> {phase === 'approve' ? 'Step 1 of 2: approve in your wallet…' : phase === 'pay-after-approve' ? 'Step 2 of 2: confirm the payment…' : 'Confirm in your wallet…'}

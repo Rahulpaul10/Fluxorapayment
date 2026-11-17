@@ -13,6 +13,10 @@ export const viewLoaders = {
   pay: () => import('@/pages/Pay').then((m) => ({ default: m.Pay })),
   history: () => import('@/pages/History').then((m) => ({ default: m.History })),
   settings: () => import('@/pages/Settings').then((m) => ({ default: m.Settings })),
+  asset: () => import('@/pages/Asset').then((m) => ({ default: m.Asset })),
+  analytics: () => import('@/pages/Analytics').then((m) => ({ default: m.Analytics })),
+  tx: () => import('@/pages/TxDetails').then((m) => ({ default: m.TxDetails })),
+  bridges: () => import('@/pages/BridgeHistory').then((m) => ({ default: m.BridgeHistory })),
 } as const
 
 type LazyView = keyof typeof viewLoaders
@@ -29,7 +33,7 @@ export function prefetchView(view: View): void {
   if (key === 'bridge') void import('./bridgeKit').then((m) => m.preloadBridgeKit())
 }
 
-const ORDER: LazyView[] = ['send', 'swap', 'receive', 'pay', 'history', 'bridge', 'settings']
+const ORDER: LazyView[] = ['send', 'swap', 'receive', 'pay', 'history', 'bridge', 'settings', 'asset', 'analytics', 'tx', 'bridges']
 
 /** After the first screen is interactive, warm the remaining pages one at a time while the browser is idle. */
 export function prefetchAllViewsWhenIdle(): () => void {

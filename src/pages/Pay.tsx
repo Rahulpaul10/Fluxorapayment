@@ -13,6 +13,7 @@ import { getFees } from '@/lib/fees'
 import { fmtToken, shortAddr } from '@/lib/format'
 import { parseTxError } from '@/lib/errors'
 import { recordActivity } from '@/lib/activity'
+import { useSingleFlight } from '@/hooks/useSingleFlight'
 import { ensureAllowance } from '@/lib/tx'
 import { bytes32ToRef, refToBytes32 } from '@/lib/payments'
 import type { View } from '@/lib/router'
@@ -68,6 +69,7 @@ function PayTab({ params, navigate }: { params: URLSearchParams; navigate: (v: V
   const { address } = useAccount()
   const client = usePublicClient({ chainId: ARC_CHAIN_ID })
   const { writeContractAsync } = useGuardedWrite()
+  const once = useSingleFlight()
   const balances = useTokenBalances()
   const config = usePaymentConfig()
 
@@ -255,7 +257,7 @@ function PayTab({ params, navigate }: { params: URLSearchParams; navigate: (v: V
       {config.data?.paused && <Notice tone="warn">Payments are paused by the contract admins.</Notice>}
       {error && <Notice tone="error">{error}</Notice>}
 
-      <button className="btn-primary w-full" disabled={!valid || phase !== 'idle'} onClick={() => void pay()}>
+      <button className="btn-primary w-full" disabled={!valid || phase !== 'idle'} onClick={() => void once(pay)}>
         {phase === 'approving' ? <><Spinner /> Approve {payingToken.symbol} in your wallet…</> : phase === 'paying' ? <><Spinner /> Confirm the payment…</> : 'Pay now'}
       </button>
       <p className="text-center text-xs text-slate-500">

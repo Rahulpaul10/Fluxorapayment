@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 
-export type View = 'dashboard' | 'send' | 'receive' | 'swap' | 'bridge' | 'pay' | 'history' | 'settings'
+export type View = 'dashboard' | 'send' | 'receive' | 'swap' | 'bridge' | 'pay' | 'history' | 'settings' | 'asset' | 'analytics' | 'tx' | 'bridges'
 
 export const VIEW_PATHS: Record<View, string> = {
   dashboard: '/',
@@ -11,6 +11,10 @@ export const VIEW_PATHS: Record<View, string> = {
   pay: '/pay',
   history: '/history',
   settings: '/settings',
+  asset: '/asset',
+  analytics: '/analytics',
+  tx: '/tx',
+  bridges: '/bridges',
 }
 
 function viewFromPath(pathname: string): View {

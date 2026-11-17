@@ -6,6 +6,7 @@ import { Header } from './Header'
 import { Wordmark } from './Logo'
 import { ConnectionStatus } from './ConnectionStatus'
 import { BackButton } from './BackButton'
+import { NetworkBanner } from './NetworkBanner'
 import { prefetchView } from '@/lib/viewLoaders'
 
 /** The only pages in the navigation. History opens from the dashboard; Pay still opens from a /pay link. */
@@ -57,6 +58,7 @@ export function Shell({ view, navigate, children }: { view: View; navigate: (v: 
           <div className="min-w-0 flex-1">
             <Header onHome={() => navigate('dashboard')} onSettings={() => navigate('settings')} settingsActive={view === 'settings'} />
             <main className="mx-auto w-full max-w-5xl px-4 pb-32 pt-4 lg:px-8 lg:pb-16 lg:pt-6">
+              <NetworkBanner />
               {view !== 'dashboard' && <BackButton navigate={navigate} />}
               {children}
             </main>

@@ -19,6 +19,10 @@ const Bridge = lazy(viewLoaders.bridge)
 const Pay = lazy(viewLoaders.pay)
 const History = lazy(viewLoaders.history)
 const Settings = lazy(viewLoaders.settings)
+const Asset = lazy(viewLoaders.asset)
+const Analytics = lazy(viewLoaders.analytics)
+const TxDetails = lazy(viewLoaders.tx)
+const BridgeHistory = lazy(viewLoaders.bridges)
 
 type RouteView = ReturnType<typeof useRoute>
 
@@ -30,10 +34,14 @@ const Outlet = memo(function Outlet({ view, params, navigate }: Pick<RouteView, 
       {view === 'send' && <Send presetTo={params.get('to') ?? undefined} presetAmount={params.get('amount') ?? undefined} presetToken={params.get('token') ?? undefined} />}
       {view === 'receive' && <Receive />}
       {view === 'swap' && <Swap />}
-      {view === 'bridge' && <Bridge />}
+      {view === 'bridge' && <Bridge navigate={navigate} />}
       {view === 'pay' && <Pay params={params} navigate={navigate} />}
-      {view === 'history' && <History />}
-      {view === 'settings' && <Settings />}
+      {view === 'history' && <History navigate={navigate} />}
+      {view === 'settings' && <Settings navigate={navigate} />}
+      {view === 'asset' && <Asset symbol={params.get('token') ?? undefined} navigate={navigate} />}
+      {view === 'analytics' && <Analytics navigate={navigate} />}
+      {view === 'tx' && <TxDetails hash={params.get('hash')} chainParam={params.get('chain')} navigate={navigate} />}
+      {view === 'bridges' && <BridgeHistory navigate={navigate} />}
     </>
   )
 })
@@ -47,7 +55,7 @@ export default function App() {
   const switching = shownView !== view
 
   useEffect(() => {
-    const titles: Record<string, string> = { dashboard: 'Dashboard', send: 'Send', receive: 'Receive', swap: 'Swap', bridge: 'Bridge', pay: 'Pay', history: 'History', settings: 'Settings' }
+    const titles: Record<string, string> = { dashboard: 'Dashboard', send: 'Send', receive: 'Receive', swap: 'Swap', bridge: 'Bridge', pay: 'Pay', history: 'History', settings: 'Settings', asset: 'Asset', analytics: 'Analytics', tx: 'Transaction', bridges: 'Bridge history' }
     document.title = `${titles[view]} · FLUXORA`
   }, [view])
 

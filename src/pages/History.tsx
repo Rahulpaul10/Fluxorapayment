@@ -1,4 +1,7 @@
 import { useMemo, useState } from 'react'
+import type { View } from '@/lib/router'
+import { nameFor, useAddressBook } from '@/lib/addressBook'
+import { applyHistoryFilters, DATE_PRESETS, PAGE_SIZE, STATUS_FILTERS, type DatePreset, type StatusFilter } from '@/lib/historyFilters'
 import { Search } from 'lucide-react'
 import { useAccount } from 'wagmi'
 import { useHistoryRows, type HistoryKind } from '@/hooks/useHistoryRows'
@@ -18,12 +21,12 @@ const FILTERS: { value: 'all' | HistoryKind; label: string }[] = [
   { value: 'payment', label: 'Payments' },
 ]
 
-export function History() {
+export function History({ navigate }: { navigate: (view: View, search?: string) => void }) {
   const { isConnected } = useAccount()
   return (
     <>
       <PageTitle title="History" subtitle="Real transfers read from Arc, labelled with what you did in FLUXORA." />
-      {isConnected ? <HistoryList /> : <ArcGate feature="History"><span /></ArcGate>}
+      {isConnected ? <HistoryList navigate={navigate} /> : <ArcGate feature="History"><span /></ArcGate>}
     </>
   )
 }
@@ -37,24 +40,25 @@ function groupByDay<T extends { timestamp: number }>(items: T[]): [string, T[]][
   return [...map.entries()]
 }
 
-function HistoryList() {
+function HistoryList({ navigate }: { navigate: (view: View, search?: string) => void }) {
   const { rows, transfers } = useHistoryRows()
+  const book = useAddressBook()
   const [filter, setFilter] = useState<'all' | HistoryKind>('all')
   const [q, setQ] = useState('')
+  const [status, setStatus] = useState<StatusFilter>('all')
+  const [preset, setPreset] = useState<DatePreset>('any')
+  const [fromDay, setFromDay] = useState('')
+  const [toDay, setToDay] = useState('')
+  const [page, setPage] = useState(0)
 
-  const shown = useMemo(() => {
-    const needle = q.trim().toLowerCase()
-    return rows.filter((r) => {
-      if (filter !== 'all' && r.kind !== filter) return false
-      if (!needle) return true
-      return (
-        r.summary.toLowerCase().includes(needle) ||
-        (r.hash?.toLowerCase().includes(needle) ?? false) ||
-        r.legs.some((l) => l.counterparty.toLowerCase().includes(needle)) ||
-        (networkById(r.chainId)?.name.toLowerCase().includes(needle) ?? false)
-      )
-    })
-  }, [rows, filter, q])
+  const filtered = useMemo(
+    () => applyHistoryFilters(rows, { kind: filter, query: q, status, preset, fromDay, toDay, networkName: (id) => networkById(id)?.name, savedName: (a) => nameFor(book, a) }),
+    [rows, filter, q, status, preset, fromDay, toDay, book],
+  )
+  const pages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE))
+  const current = Math.min(page, pages - 1)
+  const shown = filtered.slice(current * PAGE_SIZE, (current + 1) * PAGE_SIZE)
+  const reset = () => setPage(0)
 
   const scanned = transfers.head !== undefined && transfers.oldestScanned !== undefined ? transfers.head - transfers.oldestScanned : undefined
 
@@ -63,18 +67,38 @@ function HistoryList() {
       <Card className="space-y-3 !p-4">
         <div className="relative">
           <Search size={16} className="pointer-events-none absolute left-3.5 top-3.5 text-slate-500" />
-          <input className="field pl-10" placeholder="Search hash, address, token or network" value={q} onChange={(e) => setQ(e.target.value)} aria-label="Search history" />
+          <input className="field pl-10" placeholder="Search hash, address, token or network" value={q} onChange={(e) => { setQ(e.target.value); reset() }} aria-label="Search history" />
         </div>
         <div className="flex flex-wrap gap-2">
           {FILTERS.map((f) => (
             <button
               key={f.value}
-              onClick={() => setFilter(f.value)}
+              onClick={() => { setFilter(f.value); reset() }}
               className={clsx('min-h-[40px] rounded-xl px-4 text-sm font-semibold transition', filter === f.value ? 'theme-chip shadow-glow' : 'bg-white/5 text-slate-300 hover:bg-white/10')}
             >
               {f.label}
             </button>
           ))}
+        </div>
+        <div className="grid gap-2 sm:grid-cols-2">
+          <label className="block text-xs font-medium text-slate-400">
+            Status
+            <select className="field mt-1" value={status} onChange={(e) => { setStatus(e.target.value as StatusFilter); reset() }} aria-label="Filter by status">
+              {STATUS_FILTERS.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
+            </select>
+          </label>
+          <label className="block text-xs font-medium text-slate-400">
+            Date
+            <select className="field mt-1" value={preset} onChange={(e) => { setPreset(e.target.value as DatePreset); reset() }} aria-label="Filter by date">
+              {DATE_PRESETS.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
+            </select>
+          </label>
+          {preset === 'custom' && (
+            <>
+              <label className="block text-xs font-medium text-slate-400">From<input type="date" className="field mt-1" value={fromDay} max={toDay || undefined} onChange={(e) => { setFromDay(e.target.value); reset() }} aria-label="From date" /></label>
+              <label className="block text-xs font-medium text-slate-400">To<input type="date" className="field mt-1" value={toDay} min={fromDay || undefined} onChange={(e) => { setToDay(e.target.value); reset() }} aria-label="To date" /></label>
+            </>
+          )}
         </div>
       </Card>
 
@@ -86,9 +110,9 @@ function HistoryList() {
 
       <div className="grid grid-cols-3 gap-3">
         {[
-          ['Shown', shown.length, 'text-white'],
-          ['Received', shown.filter((r) => r.kind === 'receive').length, 'text-flux-green'],
-          ['Sent', shown.filter((r) => r.kind === 'send').length, 'text-flux-pink'],
+          ['Matching', filtered.length, 'text-white'],
+          ['Received', filtered.filter((r) => r.kind === 'receive').length, 'text-flux-green'],
+          ['Sent', filtered.filter((r) => r.kind === 'send').length, 'text-flux-pink'],
         ].map(([label, n, tone]) => (
           <Card key={label as string} className="!p-4 text-center">
             <p className="label">{label}</p>
@@ -100,7 +124,7 @@ function HistoryList() {
       {transfers.isLoading ? (
         <Card><p className="flex items-center gap-2 p-4 text-sm text-slate-400"><Spinner /> Reading recent Arc blocks…</p></Card>
       ) : shown.length === 0 ? (
-        <Card><p className="p-6 text-center text-sm text-slate-400">No matching transactions in the blocks scanned so far.</p></Card>
+        <Card><p className="p-6 text-center text-sm text-slate-400">{rows.length === 0 ? 'No transactions found in the blocks scanned so far.' : 'No transactions match these filters. Try clearing the search, status or date.'}</p></Card>
       ) : (
         groupByDay(shown).map(([day, items]) => (
           <section key={day} className="space-y-2">
@@ -130,6 +154,7 @@ function HistoryList() {
                     {r.status === 'success' ? 'Confirmed' : r.status === 'pending' ? 'Pending' : r.status === 'failed' ? 'Reverted' : 'Not found'}
                   </span>
                   <div className="flex items-center gap-2">
+                    {r.hash && <button className="btn-ghost !min-h-[44px] !px-3" onClick={() => navigate('tx', `?hash=${r.hash}&chain=${r.chainId}`)}>Details</button>}
                     {r.hash && <CopyButton value={r.hash} label="Hash" className="!min-h-[44px] !px-3" />}
                     {r.hash && <ExplorerLink href={explorerTx(r.chainId, r.hash)}>Explorer</ExplorerLink>}
                   </div>
@@ -138,6 +163,14 @@ function HistoryList() {
             </ul>
           </section>
         ))
+      )}
+
+      {pages > 1 && (
+        <nav className="flex items-center justify-between gap-3" aria-label="History pages">
+          <button className="btn-ghost" disabled={current === 0} onClick={() => setPage(current - 1)}>Previous</button>
+          <p className="text-sm text-slate-400" data-testid="history-page">Page {current + 1} of {pages}</p>
+          <button className="btn-ghost" disabled={current >= pages - 1} onClick={() => setPage(current + 1)}>Next</button>
+        </nav>
       )}
 
       <div className="flex flex-col items-center gap-2">

@@ -16,6 +16,7 @@ import { waitForReceipt } from '@/lib/txTracker'
 import { fmtDate, fmtToken } from '@/lib/format'
 import { parseTxError } from '@/lib/errors'
 import { recordActivity } from '@/lib/activity'
+import { useSingleFlight } from '@/hooks/useSingleFlight'
 import { bytes32ToRef, refToBytes32 } from '@/lib/payments'
 import { buildShareLink } from '@/lib/share'
 import { TokenButton, TokenPicker } from '@/components/TokenSelect'
@@ -35,6 +36,7 @@ export function RequestTab() {
   const { address } = useAccount()
   const client = usePublicClient({ chainId: ARC_CHAIN_ID })
   const { writeContractAsync } = useGuardedWrite()
+  const once = useSingleFlight()
   const balances = useTokenBalances()
   const mine = useMyRequests()
 
@@ -182,7 +184,7 @@ export function RequestTab() {
               </div>
             )}
             {mode === 'onchain' && !hash && (
-              <button className="btn-primary w-full" disabled={!ready || busy} onClick={() => void createOnchain()}>
+              <button className="btn-primary w-full" disabled={!ready || busy} onClick={() => void once(createOnchain)}>
                 {busy ? <><Spinner /> Confirm in your wallet…</> : 'Create request'}
               </button>
             )}
@@ -218,7 +220,7 @@ export function RequestTab() {
                       <p className="font-semibold text-white">#{r.id.toString()} · {t ? `${fmtToken(r.amount, t.decimals, t.decimals)} ${t.symbol}` : 'Unknown token'}</p>
                       <p className="text-xs text-slate-400">{r.status}{r.expiry ? ` · expires ${fmtDate(r.expiry)}` : ''}{bytes32ToRef(r.ref) ? ` · ${bytes32ToRef(r.ref)}` : ''}</p>
                     </div>
-                    {r.status === 'Open' && <button className="btn-ghost !min-h-[40px]" onClick={() => void cancel(r.id)}>Cancel</button>}
+                    {r.status === 'Open' && <button className="btn-ghost !min-h-[40px]" onClick={() => void once(() => cancel(r.id))}>Cancel</button>}
                   </li>
                 )
               })}

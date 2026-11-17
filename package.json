@@ -24,11 +24,17 @@
     "test:account": "bun run ./scripts/test-account-sync.ts",
     "test:pay": "bun run ./scripts/test-send-via-contract.tsx",
     "test:theme": "bun run ./scripts/test-theme-contrast.ts",
+    "test:bridge": "bun run ./scripts/test-bridge.ts",
+    "test:bridge-ui": "bun run ./scripts/test-bridge-ui.tsx",
+    "test:dashboard": "bun run ./scripts/test-dashboard.tsx",
     "test:ui": "bun run ./scripts/smoke-ui.tsx",
     "test:wallet": "bun run ./scripts/test-wallet-flow.tsx",
     "verify:deployment": "bun run ./scripts/verify-deployment.ts",
     "verify:payments": "bun run ./scripts/verify-payments.ts",
-    "test:connect": "bun run ./scripts/test-connect.tsx"
+    "test:connect": "bun run ./scripts/test-connect.tsx",
+    "test:production": "bun run scripts/test-production.ts",
+    "test:features": "bun run scripts/test-features.tsx",
+    "test:cctp-fees": "bun run scripts/test-cctp-fees.ts"
   },
   "dependencies": {
     "@circle-fin/adapter-viem-v2": "^1.19.2",

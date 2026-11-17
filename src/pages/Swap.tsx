@@ -14,6 +14,7 @@ import { waitForReceipt } from '@/lib/txTracker'
 import { fmtToken } from '@/lib/format'
 import { parseTxError } from '@/lib/errors'
 import { recordActivity } from '@/lib/activity'
+import { useSingleFlight } from '@/hooks/useSingleFlight'
 import {
   PERMIT2, PERMIT2_DOMAIN, PERMIT2_TYPES, PRICE_IMPACT_BLOCK, PRICE_IMPACT_WARN, SLIPPAGE_DEFAULT_BPS, SLIPPAGE_MAX_BPS, SLIPPAGE_WARN_BPS,
   UNISWAP_ERRORS, assertSlippage, bestQuote, buildSwap, findRoutes, minOut, permitNeeded,
@@ -52,6 +53,7 @@ function SwapForm() {
   const { address } = useAccount()
   const client = usePublicClient({ chainId: ARC_CHAIN_ID })
   const { writeContractAsync } = useGuardedWrite()
+  const once = useSingleFlight()
   const { sendTransactionAsync } = useGuardedSend()
   const { signTypedDataAsync } = useGuardedSign()
   const balances = useTokenBalances()
@@ -287,6 +289,19 @@ function SwapForm() {
 
       {q && tokenIn && tokenOut && (
         <div className={`divide-y divide-white/5 rounded-2xl border border-white/5 px-4 transition-opacity ${stale ? 'opacity-50' : ''}`} aria-busy={stale}>
+          <Row label="You pay" value={`${fmtToken(parsed.raw ?? 0n, tokenIn.decimals, 6)} ${tokenIn.symbol}`} />
+          <Row label="Network fee (up to)" value={feeReserve.data !== undefined ? `≈ ${fmtToken(feeReserve.data, 6, 6)} USDC` : '…'} />
+          <Row
+            label="Total"
+            value={
+              feeReserve.data === undefined || parsed.raw === undefined
+                ? '…'
+                : tokenIn.symbol === 'USDC'
+                  ? `${fmtToken(parsed.raw + feeReserve.data, 6, 6)} USDC at most`
+                  : `${fmtToken(parsed.raw, tokenIn.decimals, 6)} ${tokenIn.symbol} + fee in USDC`
+            }
+          />
+          <Row label="Estimated receive" value={`${fmtToken(q.amountOut, tokenOut.decimals, 6)} ${tokenOut.symbol}`} />
           <Row label="Exchange rate" value={rate !== undefined ? `1 ${tokenIn.symbol} ≈ ${rate.toLocaleString(undefined, { maximumSignificantDigits: 6 })} ${tokenOut.symbol}` : '—'} />
           <Row label="Route" value={`Uniswap ${q.route.version} · ${(q.route.feeFraction * 100).toFixed(2)}% fee`} />
           <Row
@@ -331,7 +346,7 @@ function SwapForm() {
 
       {error && <Notice tone="error">{error}</Notice>}
 
-      <button className="btn-primary w-full" disabled={!canSwap} onClick={() => void execute()}>
+      <button className="btn-primary w-full" disabled={!canSwap} onClick={() => void once(execute)}>
         {phase === 'approving' && <><Spinner /> Approve {tokenIn?.symbol} in your wallet…</>}
         {phase === 'signing' && <><Spinner /> Sign the permit in your wallet…</>}
         {phase === 'sending' && <><Spinner /> Confirm the swap in your wallet…</>}

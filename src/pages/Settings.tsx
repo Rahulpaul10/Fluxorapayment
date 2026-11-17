@@ -5,6 +5,13 @@ import { CheckCircle2, CircleAlert } from 'lucide-react'
 import { ARC_CHAIN_ID, explorerAddress } from '@/config/networks'
 import { FLUXORA_PAY_ADDRESS, fluxoraPayAbi } from '@/config/fluxoraPay'
 import { USDC } from '@/lib/tokens'
+import type { View } from '@/lib/router'
+import { NETWORKS } from '@/config/networks'
+import { ARC_TOKENS } from '@/lib/tokens'
+import { ARC_TOKEN_MESSENGER, MESSAGE_TRANSMITTER_V2, CCTP_DOMAINS } from '@/lib/cctpHistory'
+import { setOnchainDetails, useOnchainDetails } from '@/lib/onchainMode'
+import { formatGwei } from 'viem'
+import { AddressBookManager } from '@/components/AddressBookParts'
 import { Card, CopyButton, ExplorerLink, Notice, PageTitle, Row, Spinner } from '@/components/ui'
 
 /** The contract name shown to people. It is the Solidity contract in contracts/FluxoraPay.sol. */
@@ -30,7 +37,10 @@ function useFluxoraPayOnchain(address: Address | undefined) {
   })
 }
 
-export function Settings() {
+export function Settings({ navigate }: { navigate: (view: View, search?: string) => void }) {
+  const onchainMode = useOnchainDetails()
+  const arcClient = usePublicClient({ chainId: ARC_CHAIN_ID })
+  const gasPrice = useQuery({ queryKey: ['settings-gas-price'], enabled: Boolean(arcClient) && onchainMode, staleTime: 15_000, queryFn: async () => (arcClient ? arcClient.getGasPrice() : 0n) })
   const address = FLUXORA_PAY_ADDRESS
   const chain = useFluxoraPayOnchain(address)
   const onchain = chain.data
@@ -105,6 +115,72 @@ export function Settings() {
             </Notice>
           )}
         </Card>
+
+        <Card className="space-y-3">
+          <h2 className="font-display text-lg font-semibold text-white">Address book</h2>
+          <p className="text-sm text-slate-400">Save trusted wallet addresses with a name, then pick them when you send.</p>
+          <AddressBookManager />
+        </Card>
+
+        <Card className="space-y-3">
+          <div className="flex items-start justify-between gap-3">
+            <div>
+              <h2 className="font-display text-lg font-semibold text-white">Onchain details</h2>
+              <p className="text-sm text-slate-400">Show contract addresses, chain IDs, gas and block information across the app.</p>
+            </div>
+            <button
+              role="switch"
+              aria-checked={onchainMode}
+              aria-label="Onchain details"
+              className={`relative h-8 w-14 shrink-0 rounded-full transition-colors ${onchainMode ? 'bg-[var(--a)]' : 'bg-white/20'}`}
+              onClick={() => setOnchainDetails(!onchainMode)}
+              data-testid="onchain-toggle"
+            >
+              <span className={`absolute top-1 h-6 w-6 rounded-full bg-[#ffffff] transition-all ${onchainMode ? 'left-7' : 'left-1'}`} />
+            </button>
+          </div>
+          {onchainMode && (
+            <div className="space-y-4" data-testid="onchain-panel">
+              <div className="divide-y divide-white/5">
+                <Row label="Gas price (Arc)" value={gasPrice.data === undefined ? '…' : `${Number(formatGwei(gasPrice.data)).toLocaleString(undefined, { maximumFractionDigits: 3 })} gwei`} mono />
+                <Row label="Gas token" value="USDC (18 decimals natively, 6 as a token)" />
+              </div>
+              <div>
+                <p className="label">Networks</p>
+                <ul className="mt-1 divide-y divide-white/5">
+                  {NETWORKS.map((n) => (
+                    <li key={n.id} className="py-2 text-xs text-slate-300">
+                      <span className="font-semibold text-white">{n.name}</span> · chain {n.id} · CCTP domain {CCTP_DOMAINS[n.id] ?? '—'} · RPC {new URL(n.rpcUrls[0]).host}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              <div>
+                <p className="label">Contracts on Arc</p>
+                <ul className="mt-1 divide-y divide-white/5">
+                  {[...ARC_TOKENS.map((t) => [t.symbol, t.address] as const), ['CCTP TokenMessenger', ARC_TOKEN_MESSENGER] as const, ['CCTP MessageTransmitter', MESSAGE_TRANSMITTER_V2] as const, ...(address ? ([['FluxoraPay', address]] as const) : [])].map(([label, addr]) => (
+                    <li key={label} className="py-2">
+                      <p className="text-xs font-semibold text-white">{label}</p>
+                      <p className="break-all font-mono text-[11px] text-slate-300">{addr}</p>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              <p className="text-xs text-slate-500">Transaction hashes and block numbers appear on each transaction's details page while this is on.</p>
+            </div>
+          )}
+        </Card>
+
+        <div className="grid grid-cols-2 gap-3">
+          <button className="glass lift rounded-2xl p-4 text-left" onClick={() => navigate('analytics')}>
+            <p className="font-display font-semibold text-white">Analytics</p>
+            <p className="text-xs text-slate-400">Portfolio numbers</p>
+          </button>
+          <button className="glass lift rounded-2xl p-4 text-left" onClick={() => navigate('bridges')}>
+            <p className="font-display font-semibold text-white">Bridge history</p>
+            <p className="text-xs text-slate-400">CCTP transfers</p>
+          </button>
+        </div>
       </div>
     </>
   )

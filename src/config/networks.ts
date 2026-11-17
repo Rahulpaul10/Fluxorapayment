@@ -105,13 +105,20 @@ export const networkById = (id: number | undefined) => NETWORKS.find((n) => n.id
 export const isSupportedChain = (id: number | undefined) => networkById(id) !== undefined
 
 const join = (n: NetworkConfig, path: string) => `${n.explorerUrl}/${path}`
+const TX_HASH = /^0x[0-9a-fA-F]{64}$/
+const EVM_ADDRESS = /^0x[0-9a-fA-F]{40}$/
+
+/**
+ * Explorer links. The identifier is validated and URL-encoded, so a malformed value can never inject a path,
+ * query or script into a link. An invalid hash or address yields "#" instead of a guessed URL.
+ */
 export const explorerTx = (chainId: number, hash: string) => {
   const n = networkById(chainId)
-  return n ? join(n, `tx/${hash}`) : '#'
+  return n && TX_HASH.test(hash) ? join(n, `tx/${encodeURIComponent(hash)}`) : '#'
 }
 export const explorerAddress = (chainId: number, address: string) => {
   const n = networkById(chainId)
-  return n ? join(n, `address/${address}`) : '#'
+  return n && EVM_ADDRESS.test(address) ? join(n, `address/${encodeURIComponent(address)}`) : '#'
 }
 
 /**

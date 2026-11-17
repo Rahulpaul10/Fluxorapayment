@@ -16,7 +16,7 @@ export function Receive() {
       if (navigator.share) await navigator.share({ title: 'My FLUXORA address', text })
       else {
         await navigator.clipboard.writeText(address)
-        toast.success('Address copied')
+        toast.success('Sharing is not available here, so the address was copied instead')
       }
     } catch {
       // user dismissed the share sheet
@@ -40,10 +40,11 @@ export function Receive() {
       ) : (
         <div className="mx-auto grid max-w-3xl gap-5 md:grid-cols-2">
           <Card className="flex flex-col items-center gap-4">
-            <div className="rounded-3xl bg-[#ffffff] p-4">
-              <QRCodeSVG value={address} size={208} level="M" bgColor="#FFFFFF" fgColor="#070B1F" />
+            <div className="w-full max-w-[320px] rounded-3xl bg-[#ffffff] p-4" data-testid="receive-qr">
+              <QRCodeSVG value={address} size={256} level="M" bgColor="#FFFFFF" fgColor="#070B1F" className="h-auto w-full" role="img" aria-label={`QR code for wallet address ${address}`} />
             </div>
-            <p className="break-all text-center font-mono text-sm text-slate-200">{address}</p>
+            <p className="label">Your Arc address</p>
+            <p className="-mt-2 break-all text-center font-mono text-sm text-slate-200" data-testid="receive-address">{address}</p>
             <div className="grid w-full grid-cols-2 gap-2">
               <CopyButton value={address} label="Copy address" />
               <button className="btn-ghost" onClick={() => void share()}>
