@@ -165,5 +165,27 @@ try { await cctp.fetchIris(26, H as `0x${string}`, (async () => new Response('',
 check(boom, 'a server error is thrown, not hidden')
 check(cctp.CCTP_DOMAINS[5042] === 26 && cctp.CCTP_DOMAINS[1] === 0 && cctp.chainForDomain(26) === 5042 && cctp.networkForDomain(0)?.name === 'Ethereum', 'domain ids: Arc 26, Ethereum 0, and back')
 
+console.log('Page code that fails to load (a tab left open across a new version)')
+{
+  const { resilient } = await import('../src/lib/viewLoaders')
+  sessionStorage.clear()
+  let loads = 0
+  let reloads = 0
+  const ok = resilient(async () => { loads++; return 'module' }, () => { reloads++ })
+  check((await ok()) === 'module' && loads === 1 && reloads === 0, 'a normal load happens once and never reloads')
+  loads = 0
+  const flaky = resilient(async () => { loads++; if (loads === 1) throw new Error('Failed to fetch dynamically imported module'); return 'module' }, () => { reloads++ })
+  check((await flaky()) === 'module' && loads === 2 && reloads === 0, 'one failed fetch is retried and succeeds without a reload')
+  loads = 0
+  const dead = resilient(async () => { loads++; throw new Error('Failed to fetch dynamically imported module') }, () => { reloads++ })
+  const first = await Promise.race([dead().then(() => 'resolved', () => 'rejected'), new Promise((r) => setTimeout(() => r('reloading'), 1500))])
+  check(first === 'reloading' && loads === 2 && reloads === 1, 'two failed fetches reload the page once (to get the new version)', `${loads} loads, ${reloads} reload`)
+  const second = await dead().then(() => 'resolved', () => 'rejected')
+  check(second === 'rejected' && reloads === 1, 'a second failure in the same visit shows the error instead of reloading again (no reload loop)')
+  const healed = resilient(async () => 'module', () => { reloads++ })
+  await healed()
+  check(sessionStorage.getItem('fx:chunk-reload') === null, 'a successful load clears the guard')
+}
+
 console.log(`\n${pass} passed, ${fail} failed`)
 process.exit(fail === 0 ? 0 : 1)

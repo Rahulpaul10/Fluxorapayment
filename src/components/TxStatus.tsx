@@ -8,6 +8,8 @@ import type { TrackPhase, TrackState } from '@/lib/txTracker'
 import { getTiming } from '@/lib/txRegistry'
 import { formatTimeline } from '@/lib/txTimeline'
 import { explorerTx } from '@/config/networks'
+import { verifyDelivery, type DeliveryExpectation } from '@/lib/circleUsdc'
+import { fmtToken, shortAddr } from '@/lib/format'
 import { ExplorerLink, Notice, Spinner } from './ui'
 
 const short = (h: string) => `${h.slice(0, 10)}…${h.slice(-8)}`
@@ -55,22 +57,25 @@ export function TxStatus({
   chainId,
   title,
   onSettled,
+  expect,
 }: {
   hash: Hex
   chainId: number
   title: string
   onSettled?: (success: boolean) => void
+  /** What this transaction should have delivered. When given, the confirmed receipt is read to check it did. */
+  expect?: DeliveryExpectation
 }) {
   const { state, checkAgain } = useTxTracker(hash, chainId, onSettled)
   return (
     <div className="space-y-2.5">
       <TxSteps phase={state.phase} />
-      <TxNotice hash={hash} chainId={chainId} title={title} state={state} checkAgain={checkAgain} />
+      <TxNotice hash={hash} chainId={chainId} title={title} state={state} checkAgain={checkAgain} expect={expect} />
     </div>
   )
 }
 
-function TxNotice({ hash, chainId, title, state, checkAgain }: { hash: Hex; chainId: number; title: string; state: TrackState; checkAgain: () => void }) {
+function TxNotice({ hash, chainId, title, state, checkAgain, expect }: { hash: Hex; chainId: number; title: string; state: TrackState; checkAgain: () => void; expect?: DeliveryExpectation }) {
   const [startedAt] = useState(() => Math.floor(Date.now() / 1000))
   const waited = Math.max(0, useNow(1_000) - startedAt)
   const link = <ExplorerLink href={explorerTx(chainId, hash)} />
@@ -85,9 +90,19 @@ function TxNotice({ hash, chainId, title, state, checkAgain }: { hash: Hex; chai
   switch (state.phase) {
     case 'confirmed': {
       const t = getTiming(hash, chainId)
+      const delivery = expect && state.receipt ? verifyDelivery(state.receipt.logs, expect) : undefined
       return (
         <Notice tone="success" action={link}>
           {title} confirmed in block {state.receipt?.blockNumber.toString()}.
+          {delivery && expect && (
+            <span className="mt-1 block text-xs" data-testid="delivery-check" data-status={delivery.status}>
+              {delivery.status === 'verified'
+                ? `Verified in the receipt: ${fmtToken(delivery.received, expect.decimals, expect.decimals)} ${expect.symbol} arrived at ${shortAddr(expect.to)}.`
+                : delivery.status === 'mismatch'
+                  ? `Check the explorer: the receipt shows ${fmtToken(delivery.received, expect.decimals, expect.decimals)} ${expect.symbol} reaching ${shortAddr(expect.to)}, not the ${fmtToken(expect.amount, expect.decimals, expect.decimals)} ${expect.symbol} expected.`
+                  : `The receipt shows no ${expect.symbol} transfer to ${shortAddr(expect.to)}. Check the explorer.`}
+            </span>
+          )}
           <span className="mt-1 block text-xs opacity-80">
             {t ? `Checks ${(t.prepareMs / 1000).toFixed(1)}s · wallet ${(t.walletMs / 1000).toFixed(1)}s · ` : ''}confirmed {(state.elapsedMs / 1000).toFixed(1)}s after submission
           </span>

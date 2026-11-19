@@ -21,5 +21,7 @@ export function useValuedBalances() {
   )
   const total = rows.reduce((sum, r) => sum + (r.value ?? 0n), 0n)
   const unpriced = rows.filter((r) => r.raw !== undefined && r.raw > 0n && r.value === null)
-  return { rows, total, unpriced, loading: balances.isLoading || prices.isLoading, pricesLoading: prices.isLoading, refetch: balances.refetch }
+  // After loading, a balance that is still unknown (the RPC rejected or rate limited the read) must not be counted as zero.
+  const unreadable = !balances.isLoading && rows.some((r) => r.raw === undefined)
+  return { rows, total, unpriced, unreadable, loading: balances.isLoading || prices.isLoading, pricesLoading: prices.isLoading, refetch: balances.refetch }
 }

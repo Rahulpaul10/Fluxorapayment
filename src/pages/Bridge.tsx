@@ -9,14 +9,15 @@ import { ArrowDown, ArrowRight } from 'lucide-react'
 import { toast } from 'sonner'
 import { getUsdc } from '@/onchain-facts'
 import { Amount } from '@/onchain-money'
-import { NETWORKS, networkById, asChainId, type NetworkInfo } from '@/config/networks'
+import { ARC_CHAIN_ID, NETWORKS, networkById, asChainId, type NetworkInfo } from '@/config/networks'
 import { fmtToken } from '@/lib/format'
 import { parseTxError } from '@/lib/errors'
 import type { View } from '@/lib/router'
 import { checkReceive, gasUsdcRaw, networkFeeSummary, rawToUsdc } from '@/lib/bridgeMath'
-import { fetchOfficialFeeTiers, isFresh, unusualFeeWarning, verifyForwardingFee, verifyRoute, type KitChainDef } from '@/lib/cctpFees'
+import { arrivalEstimate, fetchOfficialFeeTiers, isFresh, unusualFeeWarning, verifyForwardingFee, verifyRoute, type KitChainDef } from '@/lib/cctpFees'
 import { CCTP_DOMAINS } from '@/lib/cctpHistory'
 import { useNow } from '@/hooks/useNow'
+import { useUsdcCompliance } from '@/hooks/useUsdcCompliance'
 import { bridgeSteps } from '@/lib/bridgeSteps'
 import { BridgeRoute, BridgeStepper } from '@/components/BridgeFlow'
 import { canResume, errorText, explainTx, failedStep, isRateLimited, rateLimitWaitMs, type StepLike, type TxOutcome, type TxReader } from '@/lib/bridgeErrors'
@@ -184,7 +185,10 @@ export function Bridge({ navigate }: { navigate?: (view: View, search?: string) 
   const receive = checkReceive(parsed.raw, q?.fees)
   const views = bridgeSteps(steps, running)
   const started = steps.length > 0 || running
-  const canBridge = Boolean(q && !stale && !running && onSource && parsed.raw && !recipientError && !result && receive.ok && feeVerified)
+  // Circle's USDC compliance list, read on Arc when Arc is one end of the route: a blocked sender cannot burn, a blocked recipient cannot be minted to.
+  const compliance = useUsdcCompliance({ sender: fromId === ARC_CHAIN_ID ? address : undefined, recipient: toId === ARC_CHAIN_ID ? destination : undefined })
+  const complianceBlock = compliance.blocked?.message
+  const canBridge = Boolean(q && !stale && !running && onSource && parsed.raw && !recipientError && !result && receive.ok && feeVerified && !complianceBlock)
 
   /** Say what really happened to a failed step: the kit's own message, and for a mined transaction the node's revert reason. */
   const explainFailure = async (res: BridgeResult<string>): Promise<TxOutcome | undefined> => {
@@ -449,7 +453,7 @@ export function Bridge({ navigate }: { navigate?: (view: View, search?: string) 
                     />
                     <Row label="Estimated receive" value={receive.ok ? `≈ ${rawToUsdc(receive.receiveRaw)} USDC` : '—'} />
                     <Row label="Minimum required amount" value={receive.ok || receive.reason === 'fee-covers-amount' ? `${rawToUsdc(receive.minRaw ?? 0n)} USDC` : '—'} />
-                    <Row label="Estimated arrival" value={speed === 'FAST' ? 'Typically under a minute' : 'Typically 15 to 20 minutes'} />
+                    <Row label="Estimated arrival" value={arrivalEstimate(route.data?.ok ? route.data.finality : undefined, speed)} />
                     <Row label="Route" value={`${from.name} → Circle CCTP → ${to.name}`} />
                   </div>
                 ) : null}
@@ -462,6 +466,7 @@ export function Bridge({ navigate }: { navigate?: (view: View, search?: string) 
                   : 'The fee for this route could not be priced, so the bridge is paused until a quote is available.'}
               </Notice>
             )}
+            {complianceBlock && !started && <Notice tone="error">{complianceBlock} Nothing was sent.</Notice>}
             {parsed.raw && !stale && !quote.isFetching && !started && feeBlock && (
               <Notice tone="error">
                 <p className="font-semibold">Fee could not be verified</p>

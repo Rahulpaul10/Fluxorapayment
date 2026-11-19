@@ -48,6 +48,8 @@ bun run test:send           # Send gas reserve: Max, near-full-balance and insuf
 bun run test:account        # wallet account consistency: shown account, transaction sender and wallet account must match (no network)
 bun run test:bridge         # bridge fee math, failure explanations, Retry gate and CCTP configuration (reads Arc)
 bun run test:bridge-ui      # the Bridge page with a stand-in for Circle's kit: small amounts, failures, Retry
+bun run test:circle        # Circle's docs, the bridge kit and Arc agree (CCTP V2 contracts, domains, USDC, compliance reads); read only
+bun run test:circle-ui     # USDC blocklist check and delivery verification in the real pages (fake wallet, nothing sent)
 bun run test:cctp-fees     # Arc to Ethereum quote flow checked against Circle's fee service (read only, sends nothing)
 bun run test:production     # address book, filters, tx details and CCTP status rules (no network)
 bun run test:features       # receive, settings, send picker, tx details, bridge history, analytics against real Arc data (fake wallet)

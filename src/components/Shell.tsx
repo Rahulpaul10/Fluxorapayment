@@ -9,10 +9,10 @@ import { BackButton } from './BackButton'
 import { NetworkBanner } from './NetworkBanner'
 import { prefetchView } from '@/lib/viewLoaders'
 
-/** The only pages in the navigation. History opens from the dashboard; Pay still opens from a /pay link. */
+/** The desktop sidebar's pages (phones use the dashboard's quick actions). History opens from the dashboard; Pay still opens from a /pay link. */
 const NAV: View[] = ['send', 'receive', 'swap', 'bridge']
 
-const NavButton = memo(function NavButton({ view, active, onClick, compact }: { view: View; active: boolean; onClick: (v: View) => void; compact?: boolean }) {
+const NavButton = memo(function NavButton({ view, active, onClick }: { view: View; active: boolean; onClick: (v: View) => void }) {
   const t = VIEW_THEMES[view]
   const Icon = t.icon
   return (
@@ -25,11 +25,11 @@ const NavButton = memo(function NavButton({ view, active, onClick, compact }: { 
       aria-current={active ? 'page' : undefined}
       className={clsx(
         'flex items-center rounded-2xl font-semibold transition-colors',
-        compact ? 'min-h-[56px] flex-1 flex-col justify-center gap-1 px-1 text-[11px]' : 'min-h-[48px] w-full gap-3 px-3 text-sm',
+        'min-h-[48px] w-full gap-3 px-3 text-sm',
         active ? 'bg-white/[0.08] text-white' : 'text-slate-400 hover:bg-white/5 hover:text-white',
       )}
     >
-      <Icon size={compact ? 20 : 18} className={active ? 'text-[var(--a)]' : undefined} />
+      <Icon size={18} className={active ? 'text-[var(--a)]' : undefined} />
       <span>{t.label}</span>
     </button>
   )
@@ -57,22 +57,13 @@ export function Shell({ view, navigate, children }: { view: View; navigate: (v: 
 
           <div className="min-w-0 flex-1">
             <Header onHome={() => navigate('dashboard')} onSettings={() => navigate('settings')} settingsActive={view === 'settings'} />
-            <main className="mx-auto w-full max-w-5xl px-4 pb-32 pt-4 lg:px-8 lg:pb-16 lg:pt-6">
+            <main className="mx-auto w-full max-w-5xl px-4 pb-[calc(2rem+env(safe-area-inset-bottom))] pt-4 lg:px-8 lg:pb-16 lg:pt-6">
               <NetworkBanner />
               {view !== 'dashboard' && <BackButton navigate={navigate} />}
               {children}
             </main>
           </div>
         </div>
-
-        {/* Mobile navigation */}
-        <nav className="safe-bottom fixed inset-x-0 bottom-0 z-40 border-t border-white/5 bg-navy-900 px-3 pt-2 lg:hidden" aria-label="Main">
-          <div className="mx-auto flex max-w-md items-stretch gap-1">
-            {NAV.map((v) => (
-              <NavButton key={v} view={v} compact active={v === view} onClick={navigate} />
-            ))}
-          </div>
-        </nav>
       </div>
     </ViewContext.Provider>
   )

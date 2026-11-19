@@ -26,6 +26,8 @@ export interface BridgeStepView {
   /** true when the transaction hash belongs to the destination chain */
   onDestination?: boolean
   error?: string
+  /** What is happening right now inside a step that is in progress (from the kit's own step reports) */
+  detail?: string
 }
 
 const LABELS: Record<StepKey, string> = { approve: 'Approve', burn: 'Burn', receive: 'Receive' }
@@ -70,11 +72,13 @@ export function bridgeSteps(steps: readonly KitStep[], running: boolean): Bridge
     error: step?.error,
     ...extra,
   })
+  // While Receive is in progress, say which half it is in: Circle's attestation, or the mint on the destination.
+  const receiveDetail = receiveState === 'processing' ? (attest && isOk(attest.state) ? 'Circle has attested the burn. Minting on the destination now.' : 'Waiting for Circle to attest the burn.') : undefined
   const receiveStep = [attest, mint].find((s) => s && isBad(s.state)) ?? mint ?? attest
   return [
     view('approve', approveState, approve),
     view('burn', burnState, burn),
-    view('receive', receiveState, receiveStep, { txHash: mint?.txHash, explorerUrl: mint?.explorerUrl, onDestination: true }),
+    view('receive', receiveState, receiveStep, { txHash: mint?.txHash, explorerUrl: mint?.explorerUrl, onDestination: true, detail: receiveDetail }),
   ]
 }
 

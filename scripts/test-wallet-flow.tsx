@@ -363,6 +363,7 @@ console.log('Navigation, Back button and theme')
   await waitFor(() => text().includes('Total balance'))
   const navLabels = [...document.querySelectorAll('nav[aria-label="Main"]')].flatMap((n) => [...n.querySelectorAll('button')].map((b) => (b.textContent ?? '').trim()))
   check(['Send', 'Receive', 'Swap', 'Bridge'].every((l) => navLabels.includes(l)), 'navigation shows Send, Receive, Swap and Bridge', [...new Set(navLabels)].join(', '))
+  check(document.querySelectorAll('nav[aria-label="Main"]').length === 1 && ![...document.querySelectorAll('nav')].some((n) => /\bfixed\b/.test(n.className)), 'there is no fixed bottom navigation bar (only the desktop sidebar remains)')
   check(!navLabels.includes('Pay') && !navLabels.includes('History') && !navLabels.includes('Dashboard'), 'Pay, History and Dashboard are not navigation tabs')
   // The Explore Arc "Payments" card is a link into the Pay page, not a Pay quick action: look for a button labelled exactly "Pay".
   check(!document.body.innerHTML.includes('Money flow') && ![...document.querySelectorAll('button')].some((b) => (b.textContent ?? '').trim() === 'Pay'), 'the dashboard has no Pay quick action')

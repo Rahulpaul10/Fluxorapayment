@@ -13,8 +13,30 @@ export interface GasItem {
   costRaw: bigint
 }
 
+const READ_AT_ONCE = 4
 const DEFAULT_MAX_ITEMS = 5
 const DEFAULT_LOOK_AT = 12
+
+
+interface ReceiptFacts {
+  from: string
+  costRaw: bigint
+}
+const receiptCache = new Map<string, ReceiptFacts>()
+
+/** One receipt, remembered for the rest of the visit. A receipt that cannot be read yet is skipped (null), never invented. */
+async function readReceipt(client: NonNullable<ReturnType<typeof usePublicClient>>, hash: Hex): Promise<ReceiptFacts | null> {
+  const known = receiptCache.get(hash)
+  if (known) return known
+  try {
+    const receipt = await client.getTransactionReceipt({ hash })
+    const facts = { from: receipt.from.toLowerCase(), costRaw: arcGasCostUsdc(receipt.gasUsed, receipt.effectiveGasPrice).raw }
+    receiptCache.set(hash, facts)
+    return facts
+  } catch {
+    return null
+  }
+}
 
 /**
  * What recent transactions actually cost this wallet in gas, read from their receipts. Only transactions this
@@ -35,16 +57,17 @@ export function useGasInsight(rows: HistoryRow[], opts: { max?: number; lookAt?:
     retry: 1,
     queryFn: async (): Promise<GasItem[]> => {
       if (!client || !address) return []
+      const mine = address.toLowerCase()
       const items: GasItem[] = []
-      for (const r of candidates) {
-        if (items.length >= MAX_ITEMS) break
-        try {
-          const receipt = await client.getTransactionReceipt({ hash: r.hash as Hex })
-          if (receipt.from.toLowerCase() !== address.toLowerCase()) continue
-          items.push({ hash: receipt.transactionHash, kind: r.kind, timestamp: r.timestamp, costRaw: arcGasCostUsdc(receipt.gasUsed, receipt.effectiveGasPrice).raw })
-        } catch {
-          // a receipt that cannot be read yet is skipped, never invented
-        }
+      // A few receipts at a time (they travel together in one batched request), in order, stopping once enough sent
+      // transactions are found. Receipts never change, so each is read once per visit and shared by every page.
+      for (let i = 0; i < candidates.length && items.length < MAX_ITEMS; i += READ_AT_ONCE) {
+        const batch = candidates.slice(i, i + READ_AT_ONCE)
+        const found = await Promise.all(batch.map((r) => readReceipt(client, r.hash as Hex)))
+        batch.forEach((r, j) => {
+          const f = found[j]
+          if (f && f.from === mine && items.length < MAX_ITEMS) items.push({ hash: r.hash as Hex, kind: r.kind, timestamp: r.timestamp, costRaw: f.costRaw })
+        })
       }
       return items
     },

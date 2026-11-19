@@ -14,6 +14,17 @@ g.IS_REACT_ACT_ENVIRONMENT = false
 g.ResizeObserver ??= class { observe() {} unobserve() {} disconnect() {} }
 g.IntersectionObserver ??= class { observe() {} unobserve() {} disconnect() {} takeRecords() { return [] } }
 process.env.VITE_FLUXORA_PAY_ADDRESS = ''
+// Failure injection for one test below: while on, every JSON-RPC request is answered with a rate-limit error.
+let failRpc = false
+const realFetch = globalThis.fetch
+globalThis.fetch = (async (input: RequestInfo | URL, init?: RequestInit) => {
+  if (failRpc && init?.body && typeof init.body === 'string' && /jsonrpc/.test(init.body)) {
+    const b = JSON.parse(init.body) as { id: number } | { id: number }[]
+    const err = (id: number) => ({ jsonrpc: '2.0', id, error: { code: -32005, message: 'rate limit exceeded' } })
+    return new Response(JSON.stringify(Array.isArray(b) ? b.map((r) => err(r.id)) : err(b.id)), { status: 200, headers: { 'content-type': 'application/json' } })
+  }
+  return realFetch(input, init)
+}) as typeof fetch
 
 const React = await import('react')
 const { createRoot } = await import('react-dom/client')
@@ -182,6 +193,17 @@ for (const [path, marker] of [['/send', 'Recipient address'], ['/receive', 'Rece
   go(path)
   check(await waitFor(() => text().includes(marker), 20000), `${path} opens`)
 }
+
+console.log('Balances that cannot be read are never shown as zero')
+go('/')
+await waitFor(() => /^\$[\d,]+\.\d{2}$/.test(q('[data-testid="total-balance"]')?.textContent ?? ''))
+failRpc = true
+await queryClient.invalidateQueries()
+check(await waitFor(() => (q('[data-testid="total-balance"]')?.textContent ?? '') === '—', 20000), 'when the network rejects the balance reads, the total shows a dash, not $0.00')
+check(/could not be read right now/.test(text()) && button('Retry now') !== undefined, 'and says so, with a Retry now button')
+failRpc = false
+button('Retry now')?.click()
+check(await waitFor(() => /^\$[\d,]+\.\d{2}$/.test(q('[data-testid="total-balance"]')?.textContent ?? '') && !/could not be read right now/.test(text()), 20000), 'Retry now brings the real balance back and the notice goes away')
 
 console.log(`\n${pass} passed, ${fail} failed`)
 process.exit(fail === 0 ? 0 : 1)

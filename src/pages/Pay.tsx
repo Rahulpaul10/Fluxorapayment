@@ -14,6 +14,8 @@ import { fmtToken, shortAddr } from '@/lib/format'
 import { parseTxError } from '@/lib/errors'
 import { recordActivity } from '@/lib/activity'
 import { useSingleFlight } from '@/hooks/useSingleFlight'
+import { useUsdcCompliance } from '@/hooks/useUsdcCompliance'
+import type { DeliveryExpectation } from '@/lib/circleUsdc'
 import { ensureAllowance } from '@/lib/tx'
 import { bytes32ToRef, refToBytes32 } from '@/lib/payments'
 import type { View } from '@/lib/router'
@@ -70,6 +72,8 @@ function PayTab({ params, navigate }: { params: URLSearchParams; navigate: (v: V
   const client = usePublicClient({ chainId: ARC_CHAIN_ID })
   const { writeContractAsync } = useGuardedWrite()
   const once = useSingleFlight()
+  // What the confirmed payment should have delivered to the recipient, fixed at the moment it is sent.
+  const [delivery, setDelivery] = useState<DeliveryExpectation>()
   const balances = useTokenBalances()
   const config = usePaymentConfig()
 
@@ -132,9 +136,14 @@ function PayTab({ params, navigate }: { params: URLSearchParams; navigate: (v: V
   const expired = req && req.expiry !== 0 && req.expiry <= nowSec
   const reqUnavailable = req && (req.status !== 'Open' || expired)
 
+  // Circle's USDC compliance list and pause flag, read before the wallet opens: a blocked payment would revert after signing.
+  const compliance = useUsdcCompliance({ sender: address, recipient: req ? req.creator : to }, payingToken.symbol === 'USDC')
+  const complianceBlock = compliance.blocked?.message
+
   const valid = Boolean(
     FLUXORA.payments &&
       !config.data?.paused &&
+      !complianceBlock &&
       raw &&
       !insufficient &&
       (req ? !reqUnavailable : isAddress(to) && !toError && !selfPay && supported.data === true),
@@ -170,6 +179,7 @@ function PayTab({ params, navigate }: { params: URLSearchParams; navigate: (v: V
           maxFeePerGas: fees.maxFeePerGas, maxPriorityFeePerGas: fees.maxPriorityFeePerGas,
         })
       }
+      setDelivery({ tokenAddress: payingToken.address, symbol: payingToken.symbol, decimals: payingToken.decimals, to: req ? req.creator : getAddress(to), amount: raw })
       setHash(h)
       recordActivity({
         hash: h, kind: 'payment', chainId: ARC_CHAIN_ID, account: address,
@@ -199,7 +209,7 @@ function PayTab({ params, navigate }: { params: URLSearchParams; navigate: (v: V
   if (hash) {
     return (
       <Card className="space-y-4">
-        <TxStatus hash={hash} chainId={ARC_CHAIN_ID} title="Payment" onSettled={() => { void balances.refetch(); void config.refetch() }} />
+        <TxStatus hash={hash} chainId={ARC_CHAIN_ID} title="Payment" expect={delivery} onSettled={() => { void balances.refetch(); void config.refetch() }} />
         <p className="text-sm text-slate-400">Your receipt is stored onchain. Open the Receipts tab to view it.</p>
         <button className="btn-ghost w-full" onClick={() => { setHash(undefined); setAmount(''); navigate('pay') }}>
           Make another payment
@@ -253,6 +263,7 @@ function PayTab({ params, navigate }: { params: URLSearchParams; navigate: (v: V
         </div>
       ) : null}
 
+      {complianceBlock && <Notice tone="error">{complianceBlock}</Notice>}
       {insufficient && <Notice tone="error">Insufficient {payingToken.symbol} balance for the amount plus fee.</Notice>}
       {config.data?.paused && <Notice tone="warn">Payments are paused by the contract admins.</Notice>}
       {error && <Notice tone="error">{error}</Notice>}

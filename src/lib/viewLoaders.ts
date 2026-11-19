@@ -5,18 +5,56 @@ import type { View } from './router'
  * for a page is usually already in the browser before the user opens it. Calling a loader twice is free: the
  * browser module cache returns the same module.
  */
+
+const RELOAD_KEY = 'fx:chunk-reload'
+
+/**
+ * A page's code is a separate file. After a new version is published, a tab that is still open asks for files that no
+ * longer exist, and the page fails with "Failed to fetch dynamically imported module" (seen in real sessions). Try once
+ * more, then reload ONCE (guarded, so it can never loop) to pick up the new version. The wallet stays connected.
+ */
+export function resilient<T>(load: () => Promise<T>, reload: () => void = () => window.location.reload()): () => Promise<T> {
+  return async () => {
+    try {
+      const module = await load()
+      try {
+        sessionStorage.removeItem(RELOAD_KEY)
+      } catch {
+        // storage unavailable: nothing to clear
+      }
+      return module
+    } catch {
+      await new Promise((resolve) => setTimeout(resolve, 600))
+      try {
+        return await load()
+      } catch (error) {
+        try {
+          if (sessionStorage.getItem(RELOAD_KEY) !== '1') {
+            sessionStorage.setItem(RELOAD_KEY, '1')
+            reload()
+            return await new Promise<T>(() => undefined) // the page is reloading
+          }
+        } catch {
+          // storage unavailable: fall through to the error screen
+        }
+        throw error
+      }
+    }
+  }
+}
+
 export const viewLoaders = {
-  send: () => import('@/pages/Send').then((m) => ({ default: m.Send })),
-  receive: () => import('@/pages/Receive').then((m) => ({ default: m.Receive })),
-  swap: () => import('@/pages/Swap').then((m) => ({ default: m.Swap })),
-  bridge: () => import('@/pages/Bridge').then((m) => ({ default: m.Bridge })),
-  pay: () => import('@/pages/Pay').then((m) => ({ default: m.Pay })),
-  history: () => import('@/pages/History').then((m) => ({ default: m.History })),
-  settings: () => import('@/pages/Settings').then((m) => ({ default: m.Settings })),
-  asset: () => import('@/pages/Asset').then((m) => ({ default: m.Asset })),
-  analytics: () => import('@/pages/Analytics').then((m) => ({ default: m.Analytics })),
-  tx: () => import('@/pages/TxDetails').then((m) => ({ default: m.TxDetails })),
-  bridges: () => import('@/pages/BridgeHistory').then((m) => ({ default: m.BridgeHistory })),
+  send: resilient(() => import('@/pages/Send').then((m) => ({ default: m.Send }))),
+  receive: resilient(() => import('@/pages/Receive').then((m) => ({ default: m.Receive }))),
+  swap: resilient(() => import('@/pages/Swap').then((m) => ({ default: m.Swap }))),
+  bridge: resilient(() => import('@/pages/Bridge').then((m) => ({ default: m.Bridge }))),
+  pay: resilient(() => import('@/pages/Pay').then((m) => ({ default: m.Pay }))),
+  history: resilient(() => import('@/pages/History').then((m) => ({ default: m.History }))),
+  settings: resilient(() => import('@/pages/Settings').then((m) => ({ default: m.Settings }))),
+  asset: resilient(() => import('@/pages/Asset').then((m) => ({ default: m.Asset }))),
+  analytics: resilient(() => import('@/pages/Analytics').then((m) => ({ default: m.Analytics }))),
+  tx: resilient(() => import('@/pages/TxDetails').then((m) => ({ default: m.TxDetails }))),
+  bridges: resilient(() => import('@/pages/BridgeHistory').then((m) => ({ default: m.BridgeHistory }))),
 } as const
 
 type LazyView = keyof typeof viewLoaders

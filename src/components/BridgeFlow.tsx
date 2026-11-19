@@ -42,7 +42,7 @@ export function BridgeStepper({ steps, fromId, toId }: { steps: BridgeStepView[]
               <div className="min-w-0 flex-1">
                 <p className="text-sm font-semibold text-white">{s.label}</p>
                 <p className="text-xs text-slate-400">
-                  {s.key === 'approve' ? 'Allow the bridge to use this amount of USDC' : s.key === 'burn' ? 'USDC is burned on the source network' : 'Circle signs the burn, then USDC is minted on the destination'}
+                  {s.detail ?? (s.key === 'approve' ? 'Allow the bridge to use this amount of USDC' : s.key === 'burn' ? 'USDC is burned on the source network' : 'Circle signs the burn, then USDC is minted on the destination')}
                 </p>
               </div>
               <span className={clsx('shrink-0 rounded-full px-2.5 py-1 text-xs font-semibold', STATE_STYLE[s.state])}>{STATE_TEXT[s.state]}</span>

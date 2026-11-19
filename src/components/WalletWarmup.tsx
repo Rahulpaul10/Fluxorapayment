@@ -25,7 +25,10 @@ export function WalletWarmup() {
     if (!wanted || diagRan || !isConnected || chainId !== ARC_CHAIN_ID) return
     diagRan = true
     const id = setTimeout(() => {
-      void runWalletDiagnostics().then((r) => console.info(formatDiagnostics(r)))
+      // A wallet that has just disconnected (EIP-1193 code 4900) rejects here: log it, never leave it unhandled.
+      void runWalletDiagnostics()
+        .then((r) => console.info(formatDiagnostics(r)))
+        .catch((e: unknown) => console.info(`[FLUXORA diag] skipped: ${(e as Error)?.message ?? 'wallet unavailable'}`))
     }, 3_000)
     return () => clearTimeout(id)
   }, [isConnected, chainId])

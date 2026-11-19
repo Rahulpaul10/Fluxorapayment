@@ -139,10 +139,17 @@ export interface KitChainDef {
   chain: string
   chainId?: number
   isTestnet?: boolean
-  cctp?: { domain?: number } | null
+  cctp?: { domain?: number; contracts?: { v2?: { confirmations?: number; fastConfirmations?: number } } } | null
 }
 
-export type RouteVerdict = { ok: true; sourceDomain: number; destinationDomain: number } | { ok: false; message: string }
+export interface SourceFinality {
+  /** Block confirmations Circle waits for on a standard transfer */
+  confirmations?: number
+  /** Block confirmations for a Fast Transfer, where the source chain offers one */
+  fastConfirmations?: number
+}
+
+export type RouteVerdict = { ok: true; sourceDomain: number; destinationDomain: number; finality: SourceFinality } | { ok: false; message: string }
 
 /**
  * Both ends must be MAINNET chains whose id and CCTP domain in the kit's own chain data match what this app
@@ -159,5 +166,18 @@ export function verifyRoute(defs: readonly KitChainDef[], from: { kit: string; i
   const dd = b.cctp?.domain
   if (sd === undefined || dd === undefined) return { ok: false, message: 'Circle CCTP is not available on one of these networks.' }
   if (sd !== expected[from.id] || dd !== expected[to.id]) return { ok: false, message: `The CCTP domains for ${from.name} (${sd}) and ${to.name} (${dd}) do not match what this app expects (${expected[from.id]}, ${expected[to.id]}), so the route is refused.` }
-  return { ok: true, sourceDomain: sd, destinationDomain: dd }
+  return { ok: true, sourceDomain: sd, destinationDomain: dd, finality: { confirmations: a.cctp?.contracts?.v2?.confirmations, fastConfirmations: a.cctp?.contracts?.v2?.fastConfirmations } }
+}
+
+/**
+ * How long until the funds arrive, from the SOURCE chain's own finality as listed by the bridge kit (Circle's data).
+ * Circle's docs: a chain that needs only a few confirmations (Arc: 1, about 0.5 s) attests in seconds even on a standard
+ * transfer; chains that wait for Ethereum finality (about 65 blocks) take about 15 to 19 minutes unless a Fast Transfer is used.
+ */
+export function arrivalEstimate(finality: SourceFinality | undefined, speed: SpeedKey): string {
+  const few = (n: number | undefined) => n !== undefined && n <= 3
+  if (!finality || finality.confirmations === undefined) return 'Depends on the source network, usually a few minutes'
+  if (few(finality.confirmations)) return 'Typically under a minute'
+  if (speed === 'FAST' && few(finality.fastConfirmations)) return 'Typically under a minute'
+  return speed === 'FAST' ? 'Typically a few minutes' : 'Typically 15 to 20 minutes'
 }

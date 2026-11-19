@@ -43,7 +43,7 @@ function Landing() {
 export function Dashboard({ navigate }: { navigate: (v: View, search?: string) => void }) {
   const { isConnected, address } = useAccount()
   const { onArc, switchToArc } = useArcWallet()
-  const { rows: assets, total, unpriced, loading, pricesLoading } = useValuedBalances()
+  const { rows: assets, total, unpriced, unreadable, loading, pricesLoading, refetch: refetchBalances } = useValuedBalances()
   const { rows, transfers } = useHistoryRows()
 
   if (!isConnected || !address) return <Landing />
@@ -62,9 +62,17 @@ export function Dashboard({ navigate }: { navigate: (v: View, search?: string) =
         <div className="mt-5 pb-1 text-center">
           <p className="label">Total balance</p>
           <p className="mt-1.5 break-words font-display text-5xl font-bold tracking-[-0.04em] text-white tabular sm:text-6xl" data-testid="total-balance">
-            {loading ? <span className="skeleton inline-block h-12 w-48 align-middle" aria-busy="true" aria-label="Loading balance" /> : <>${fmtUsd(total, USDC.decimals)}</>}
+            {loading ? <span className="skeleton inline-block h-12 w-48 align-middle" aria-busy="true" aria-label="Loading balance" /> : unreadable ? <>—</> : <>${fmtUsd(total, USDC.decimals)}</>}
           </p>
           <p className="mt-1 text-xs text-slate-400">USDC value of your Arc assets</p>
+          {unreadable && (
+            <p className="mt-1 text-xs text-amber-200" role="status">
+              Some balances could not be read right now (the network is busy). Trying again automatically.{' '}
+              <button className="min-h-[44px] px-1 font-semibold underline" onClick={() => void refetchBalances()}>
+                Retry now
+              </button>
+            </p>
+          )}
           {unpriced.length > 0 && <p className="mt-1 text-xs text-amber-200">No live price for {unpriced.map((u) => u.token.symbol).join(', ')}. Held, but not in the total.</p>}
         </div>
       </section>

@@ -17,6 +17,8 @@ import { fmtToken, shortAddr } from '@/lib/format'
 import { parseTxError } from '@/lib/errors'
 import { recordActivity } from '@/lib/activity'
 import { useSingleFlight } from '@/hooks/useSingleFlight'
+import { useUsdcCompliance } from '@/hooks/useUsdcCompliance'
+import type { DeliveryExpectation } from '@/lib/circleUsdc'
 import { AddressBookPicker } from '@/components/AddressBookParts'
 import { ArcGate } from '@/components/Gate'
 import { TokenButton, TokenPicker } from '@/components/TokenSelect'
@@ -73,6 +75,8 @@ function SendForm({ presetTo, presetAmount, presetToken }: { presetTo?: string; 
   const [step, setStep] = useState<'edit' | 'review'>('edit')
   const [busy, setBusy] = useState(false)
   const once = useSingleFlight()
+  // What the confirmed transfer should have delivered, fixed at the moment it is sent (the form may change afterwards).
+  const [delivery, setDelivery] = useState<DeliveryExpectation>()
   const [hash, setHash] = useState<Hex>()
   const [error, setError] = useState<string>()
   const [hint, setHint] = useState<string>()
@@ -195,7 +199,10 @@ function SendForm({ presetTo, presetAmount, presetToken }: { presetTo?: string; 
     return result
   })()
 
-  const ready = Boolean(check.recipient && check.raw && !check.toError && !check.amountError && !check.noteError)
+  // Circle's USDC compliance list and pause flag, read before the wallet opens (a blocked transfer would revert after signing).
+  const compliance = useUsdcCompliance({ sender: address, recipient: check.recipient }, token.symbol === 'USDC')
+  const complianceBlock = compliance.blocked?.message
+  const ready = Boolean(check.recipient && check.raw && !check.toError && !check.amountError && !check.noteError && !complianceBlock)
 
   const setMax = () => {
     if (balance === undefined) return
@@ -248,6 +255,7 @@ function SendForm({ presetTo, presetAmount, presetToken }: { presetTo?: string; 
           args: [check.recipient, check.raw],
         })
       }
+      setDelivery({ tokenAddress: token.address, symbol: token.symbol, decimals: token.decimals, to: check.recipient, amount: check.raw })
       setHash(h)
       // Read the transaction back: if the wallet signed from another account than the one shown, say so loudly.
       void verifySender(client, h, address).then((v) => {
@@ -275,7 +283,7 @@ function SendForm({ presetTo, presetAmount, presetToken }: { presetTo?: string; 
   if (hash) {
     return (
       <Card className="space-y-4">
-        <TxStatus hash={hash} chainId={ARC_CHAIN_ID} title="Transfer" onSettled={() => void balances.refetch()} />
+        <TxStatus hash={hash} chainId={ARC_CHAIN_ID} title="Transfer" expect={delivery} onSettled={() => void balances.refetch()} />
         <button
           className="btn-ghost w-full"
           onClick={() => {
@@ -311,6 +319,7 @@ function SendForm({ presetTo, presetAmount, presetToken }: { presetTo?: string; 
             />
             <AddressBookPicker value={to} onPick={(a) => setTo(a)} />
             {check.toError && <p className="mt-1.5 text-sm text-flux-pink">{check.toError}</p>}
+            {complianceBlock && <p className="mt-1.5 text-sm text-flux-pink" role="alert" data-testid="usdc-blocked">{complianceBlock}</p>}
             {check.warn && <p className="mt-1.5 text-sm text-amber-300">{check.warn}</p>}
           </div>
 
