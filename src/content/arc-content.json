@@ -1,0 +1,1018 @@
+{
+  "retrievedAt": "2026-11-20T14:38:16.980Z",
+  "sources": {
+    "ecosystem": "https://www.arc.io/ecosystem",
+    "blog": "https://www.arc.io/blog",
+    "docs": "https://docs.arc.io/llms.txt",
+    "home": "https://www.arc.io"
+  },
+  "partnersListedByArc": 99,
+  "partnersInStructuredData": 99,
+  "partners": [
+    {
+      "name": "0x",
+      "description": "0x is an open-source decentralized exchange infrastructure provider and developer toolkit.",
+      "url": "https://0x.org/",
+      "tags": []
+    },
+    {
+      "name": "1inch",
+      "description": "The 1inch swap aggregator is your gateway to secure and efficient DeFi.",
+      "url": "https://1inch.com/",
+      "tags": []
+    },
+    {
+      "name": "1Shot",
+      "description": "",
+      "url": "https://1shotapi.com/",
+      "tags": []
+    },
+    {
+      "name": "Aave",
+      "description": "Aave is an Open Source Protocol to create Non-Custodial Liquidity Markets to earn interest on supplying and borrowing assets",
+      "url": "https://aave.com/",
+      "tags": []
+    },
+    {
+      "name": "Absa",
+      "description": "With Absa Digital Banking services, you can open a bank account, get a loan, or sign up for internet banking quickly.",
+      "url": "https://www.absa.co.za/personal/",
+      "tags": []
+    },
+    {
+      "name": "Across",
+      "description": "Across uses an intent-based design to deliver near-instant transfers.",
+      "url": "https://across.to/",
+      "tags": []
+    },
+    {
+      "name": "Alchemy",
+      "description": "Build and scale apps onchain with Alchemy's RPC APIs, data APIs, and developer tools across 100+ blockchains.",
+      "url": "https://www.alchemy.com",
+      "tags": []
+    },
+    {
+      "name": "Alcove",
+      "description": "A software infrastructure and API-first reference layer built for environmental and energy transition asset markets.",
+      "url": "https://alcovewallet.com/",
+      "tags": []
+    },
+    {
+      "name": "Aleo (via xReserve)",
+      "description": "Aleo is a blockchain that supports fully private transactions on Ledger hardware wallets.",
+      "url": "https://www.aleo.org",
+      "tags": []
+    },
+    {
+      "name": "Allium",
+      "description": "Stream blockchain events to your systems in real time. Full chain data or filtered streams, without building infrastructure.",
+      "url": "https://www.allium.so/",
+      "tags": []
+    },
+    {
+      "name": "Allnodes",
+      "description": "Non-custodial platform, which allows you to host nodes, stake coins and monitor blockchain addresses in a few clicks.",
+      "url": "https://arc.publicnode.com/",
+      "tags": [
+        "RPC Providers"
+      ]
+    },
+    {
+      "name": "AllUnity",
+      "description": "AllUnity is a regulated e-money institute, building the next generation of digital payments infrastructure.",
+      "url": "https://allunity.com/",
+      "tags": [
+        "Stablecoin Issuers"
+      ]
+    },
+    {
+      "name": "Anchorage",
+      "description": "A premier institutional digital asset platform and home to the first federally chartered digital asset bank in the US.",
+      "url": "https://www.anchorage.com/",
+      "tags": []
+    },
+    {
+      "name": "Argus",
+      "description": "Argus is an Arc-native token launchpad and decentralized finance (DeFi) infrastructure project.",
+      "url": "https://argus.world/",
+      "tags": []
+    },
+    {
+      "name": "Aster",
+      "description": "Trade perpetuals on Aster, the top DEX with low fees, deep liquidity, multichain support, high leverage and yield.",
+      "url": "https://www.asterdex.com/en",
+      "tags": []
+    },
+    {
+      "name": "Augustus",
+      "description": "Institutional grade platform for crypto. Secure software for the management and settlement of digital assets.",
+      "url": "https://www.augustus.com",
+      "tags": []
+    },
+    {
+      "name": "Auros",
+      "description": "Auros Global is a proprietary crypto trading firm delivering institutional liquidity, advanced market making, and more.",
+      "url": "https://www.auros.global/",
+      "tags": []
+    },
+    {
+      "name": "Avenia",
+      "description": "Power your product with real-time, cross-border payment capabilities. From PIX in Brazil to global stablecoin flows.",
+      "url": "https://avenia.io/",
+      "tags": [
+        "Stablecoin Issuers"
+      ]
+    },
+    {
+      "name": "B2C2",
+      "description": "Institutional solutions for Asset Managers, Funds, Banks, Brokers, Exchanges, DATs, Fintechs, and Crypto Projects.",
+      "url": "https://www.b2c2.com/",
+      "tags": []
+    },
+    {
+      "name": "Backpack",
+      "description": "A web3 platform featuring a self-custody crypto wallet, a centralized exchange, and tokenized stock brokerage services.",
+      "url": "https://backpack.exchange/",
+      "tags": []
+    },
+    {
+      "name": "Bank Frick",
+      "description": "An entrepreneurial and innovative Bank for financial intermediaries and professional clients.",
+      "url": "https://www.bankfrick.li/en",
+      "tags": []
+    },
+    {
+      "name": "Bankr",
+      "description": "Bankr is an AI agent that can buy, sell, swap coins and place limit orders.",
+      "url": "https://bankr.bot/terminal",
+      "tags": []
+    },
+    {
+      "name": "BCW",
+      "description": "BCW Group is an enterprise solutions firm & venture studio dedicated to building cloud, Web3 & AI infrastructure.",
+      "url": "https://www.bcw.group/",
+      "tags": []
+    },
+    {
+      "name": "BDACS (KRW1)",
+      "description": "The only institutional-grade digital asset custody service in Korea.",
+      "url": "https://krw1.kr/",
+      "tags": [
+        "Stablecoin Issuers"
+      ]
+    },
+    {
+      "name": "Binance",
+      "description": "Buy and trade BTC, ETH, XRP and more on Binance. Enjoy low fees, fast payments, and a trusted platform for crypto trading.",
+      "url": "https://binance.com",
+      "tags": []
+    },
+    {
+      "name": "Binance Wallet",
+      "description": "Trade memes, tokenized stocks, perps and Alpha tokens, or trade on prediction markets with Binance Wallet.",
+      "url": "https://web3.binance.com/en-ZA/about?chain=bsc",
+      "tags": []
+    },
+    {
+      "name": "Birdeye",
+      "description": "Explore real-time token data including prices, trades, charts and wallets across Solana, Sui, Ethereum and major EVM chains.",
+      "url": "https://www.birdeye.so",
+      "tags": [
+        "Analytics"
+      ]
+    },
+    {
+      "name": "Bitget Wallet",
+      "description": "Bitget is a cryptocurrency exchange that was originally founded in Singapore in 2018.",
+      "url": "https://web3.bitget.com/",
+      "tags": []
+    },
+    {
+      "name": "BitGo",
+      "description": "BitGo's prime platform brings trading, financing, collateral management, and settlement together into one operational flow.",
+      "url": "https://www.bitgo.com/",
+      "tags": []
+    },
+    {
+      "name": "Bitrue",
+      "description": "Buy and sell top cryptocurrencies on Bitrue — a secure crypto trading platform with low fees and fast execution.",
+      "url": "https://www.bitrue.com/",
+      "tags": []
+    },
+    {
+      "name": "Bitso / Juno",
+      "description": "Invest in crypto, bitcoin, ethereum, and global stocks. Earn yields, send, and receive money securely with Bitso.",
+      "url": "https://buildwithjuno.com/en-US",
+      "tags": [
+        "Stablecoin Issuers"
+      ]
+    },
+    {
+      "name": "Bitvavo",
+      "description": "Bitvavo enables you to earn passive returns on your crypto.",
+      "url": "https://bitvavo.com/en",
+      "tags": []
+    },
+    {
+      "name": "BlackRock",
+      "description": "BlackRock is the world's largest asset manager and a fiduciary, providing investment management, risk management, and more.",
+      "url": "https://www.blackrock.com/us/individual",
+      "tags": [
+        "Tokenized Assets"
+      ]
+    },
+    {
+      "name": "Blockaid",
+      "description": "A real-time web3 security platform that protects wallets, dApps, and exchanges from crypto scams, phishing, and hacks.",
+      "url": "https://blockaid.io",
+      "tags": [
+        "Analytics"
+      ]
+    },
+    {
+      "name": "Blockdaemon",
+      "description": "Trusted by 400+ institutions to launch, secure, and scale digital asset products across custody, tokenization and more.",
+      "url": "https://www.blockdaemon.com/",
+      "tags": [
+        "Analytics"
+      ]
+    },
+    {
+      "name": "Blockradar",
+      "description": "Blockradar enables fast, low-cost money transfers for individuals across borders with stablecoins.",
+      "url": "https://blockradar.co",
+      "tags": []
+    },
+    {
+      "name": "Blockscout",
+      "description": "Blockscout is an open-source block explorer available for all Ethereum Virtual Machine (EVM) based chains.",
+      "url": "https://www.blockscout.com/",
+      "tags": [
+        "Analytics",
+        "RPC Providers"
+      ]
+    },
+    {
+      "name": "BNY",
+      "description": "BNY is a global financial services platforms company at the heart of the world's capital markets.",
+      "url": "https://www.bny.com/corporate/global/en.html",
+      "tags": []
+    },
+    {
+      "name": "Bridge",
+      "description": "A stablecoin platform built for developers. Enable quick, easy, and cost-effective global money movement.",
+      "url": "https://www.bridge.xyz/",
+      "tags": []
+    },
+    {
+      "name": "Bron",
+      "description": "Bron is a non-custodial wallet that lets you lose devices, passwords, and backups.",
+      "url": "https://bron.org/",
+      "tags": []
+    },
+    {
+      "name": "BTG Pactual",
+      "description": "BTG Pactual is a federally chartered bank offering banking, investment, credit, mortgage, & cross-border financial services.",
+      "url": "https://www.btgpactual.us/",
+      "tags": []
+    },
+    {
+      "name": "Bungee",
+      "description": "Bungee is a multi-chain liquidity marketplace, bridge aggregator, and trading platform built on the Socket Protocol.",
+      "url": "https://www.bungee.exchange",
+      "tags": []
+    },
+    {
+      "name": "BVNK",
+      "description": "Enterprise stablecoin payments infrastructure. Build financial products, unlock new markets, move money across 130+ countries",
+      "url": "https://www.bvnk.com/",
+      "tags": []
+    },
+    {
+      "name": "Bybit",
+      "description": "Crypto trading experience elevated. Buy, sell, trade BTC, altcoins & NFTs.",
+      "url": "https://www.bybit.com/en",
+      "tags": []
+    },
+    {
+      "name": "Cactus Custody",
+      "description": "Cactus Custody is a qualified custodian acting within regulatory guidelines to provide custody services for institutions.",
+      "url": "https://www.mycactus.com/",
+      "tags": []
+    },
+    {
+      "name": "Careem",
+      "description": "Careem makes it easier to move around, order food and groceries, manage payments, and more.",
+      "url": "https://www.careem.com/",
+      "tags": []
+    },
+    {
+      "name": "Catena Labs",
+      "description": "Catena is the banking and governance platform for AI agents that supports payments, treasury, and other services.",
+      "url": "https://catenalabs.com/",
+      "tags": []
+    },
+    {
+      "name": "Ceffu",
+      "description": "An institutional digital asset platform offering custody and liquidity solutions to secure, manage, and utilize your crypto.",
+      "url": "https://www.ceffu.com/",
+      "tags": []
+    },
+    {
+      "name": "Centrifuge",
+      "description": "Centrifuge is the platform for tokenized real-world assets, providing the infrastructure to tokenize, manage, and invest.",
+      "url": "https://centrifuge.io/",
+      "tags": [
+        "Tokenized Assets"
+      ]
+    },
+    {
+      "name": "Chainalysis",
+      "description": "Chainalysis combines blockchain data and AI to help government agencies, crypto businesses, and financial institutions.",
+      "url": "https://www.chainalysis.com/",
+      "tags": [
+        "Analytics"
+      ]
+    },
+    {
+      "name": "Chainlink",
+      "description": "Chainlink is a leading decentralized oracle network that acts as crucial infrastructure for the blockchain industry.",
+      "url": "https://chain.link/",
+      "tags": []
+    },
+    {
+      "name": "Chronicle Labs",
+      "description": "Chronicle Labs provides cost-efficient, decentralized, and verifiable blockchain oracles. Secure data feeds for Web3.",
+      "url": "https://chroniclelabs.org/",
+      "tags": []
+    },
+    {
+      "name": "Coinbase",
+      "description": "Coinbase is a secure online platform for buying, selling, transferring, and storing cryptocurrency.",
+      "url": "https://www.coinbase.com/",
+      "tags": []
+    },
+    {
+      "name": "Coincheck",
+      "description": "Buy and sell cryptocurrency for as little as 500 JPY 24/7. Transfer & Deposit funds instantly.",
+      "url": "https://coincheck.com/",
+      "tags": []
+    },
+    {
+      "name": "CoinGecko",
+      "description": "CoinGecko provides a fundamental analysis of the crypto market.",
+      "url": "https://www.coingecko.com/",
+      "tags": [
+        "Analytics"
+      ]
+    },
+    {
+      "name": "CoinMarketCap",
+      "description": "Top cryptocurrency prices and charts, listed by market capitalization. Free access to current and historic data.",
+      "url": "https://coinmarketcap.com",
+      "tags": [
+        "Analytics"
+      ]
+    },
+    {
+      "name": "Coins.ph",
+      "description": "BSP-regulated wallet for Filipinos. Pay bills, Use QRPH at 600k+ stores, send money home in seconds, and more.",
+      "url": "https://www.coins.ph/",
+      "tags": []
+    },
+    {
+      "name": "Commerzbank",
+      "description": "Commerzbank is the leading bank for the German Mittelstand and a strong partner for around 24,000 corporate client groups.",
+      "url": "https://www.commerzbank.de/group/",
+      "tags": []
+    },
+    {
+      "name": "Copper",
+      "description": "Copper is a digital asset infrastructure provider offering custody, prime services, and collateral management.",
+      "url": "https://copper.co/en",
+      "tags": []
+    },
+    {
+      "name": "Copperx",
+      "description": "Accept stablecoin payments, open financial accounts, and send money globally with Copperx.",
+      "url": "https://copperx.io/",
+      "tags": []
+    },
+    {
+      "name": "Corpay",
+      "description": "Corpay gives you the tools to move money securely and stay confident in every transaction.",
+      "url": "https://www.corpay.com/",
+      "tags": []
+    },
+    {
+      "name": "Crossmint",
+      "description": "All-in-one stablecoin infrastructure for enterprises.",
+      "url": "https://www.crossmint.com/",
+      "tags": []
+    },
+    {
+      "name": "Cumberland",
+      "description": "Cumberland provides deep, dependable liquidity in cryptoassets.",
+      "url": "https://www.cumberland.io/",
+      "tags": []
+    },
+    {
+      "name": "Curve",
+      "description": "Curve Finance is a decentralized exchange (DEX) specifically optimized for swapping assets with similar values.",
+      "url": "https://www.curve.finance/",
+      "tags": []
+    },
+    {
+      "name": "Cycles",
+      "description": "With Cycles, anyone can clear their debts in a private, secure, and accessible way, using any type of currency.",
+      "url": "https://pay.cycles.money/",
+      "tags": []
+    },
+    {
+      "name": "DCent",
+      "description": "Maker of the world's first fingerprint-secured hardware wallet. DCent helps you step into future finance on your own terms.",
+      "url": "https://dcentwallet.com/",
+      "tags": []
+    },
+    {
+      "name": "DeFiLlama",
+      "description": "Track Total Value Locked (TVL), revenue, fees, volume, and yields across 7000+ DeFi protocols on 500+ chains.",
+      "url": "https://defillama.com",
+      "tags": [
+        "Analytics"
+      ]
+    },
+    {
+      "name": "Definitive",
+      "description": "Definitive is a non-custodial trading platform for on-chain assets. Offers professional-grade execution on 11+ EVM chains.",
+      "url": "https://www.definitive.fi/",
+      "tags": []
+    },
+    {
+      "name": "DFNS",
+      "description": "Core banking platform for digital assets. DFNS enables banks, fintechs, and businesses around the world to run financial ops.",
+      "url": "https://dfns.co/",
+      "tags": []
+    },
+    {
+      "name": "Dialectic",
+      "description": "Dialectic combines machine intelligence with crypto-native primitives to build superior financial compounding machines.",
+      "url": "https://dialectic.com/",
+      "tags": []
+    },
+    {
+      "name": "Digital Garage",
+      "description": "Digital Garage operates Crypto Garage, a fintech subsidiary focused on institutional blockchain financial services.",
+      "url": "https://www.garage.co.jp/",
+      "tags": []
+    },
+    {
+      "name": "Dinari",
+      "description": "Dinari is a tokenized securities platform that issues 1:1 backed dShare tokens representing US stocks, ETFs, and more.",
+      "url": "https://dinari.com/",
+      "tags": [
+        "Tokenized Assets"
+      ]
+    },
+    {
+      "name": "Doppler",
+      "description": "The protocol for creating and distributing tokens with fair price discovery, MEV protection, and built-in paths to liquidity.",
+      "url": "https://doppler.finance",
+      "tags": []
+    },
+    {
+      "name": "Dromos Labs",
+      "description": "Dromos Labs builds decentralized systems and infrastructure that give users greater stake and control in the new economy.",
+      "url": "https://dromos.xyz/",
+      "tags": []
+    },
+    {
+      "name": "dRPC",
+      "description": "dRPC provides modular RPC solutions to launch, scale, and monitor your blockchain data infrastructure.",
+      "url": "https://drpc.org/",
+      "tags": [
+        "RPC Providers"
+      ]
+    },
+    {
+      "name": "DTCC",
+      "description": "DTCC advances solutions that help markets grow and protects the integrity of the global financial system.",
+      "url": "https://www.dtcc.com",
+      "tags": [
+        "Validators"
+      ]
+    },
+    {
+      "name": "Dune",
+      "description": "Normalized blockchain datasets across stablecoins, tokenized assets, payments, trading, and lending.",
+      "url": "https://dune.com",
+      "tags": [
+        "Analytics"
+      ]
+    },
+    {
+      "name": "Dynamic",
+      "description": "Dynamic combines authentication, smart wallets, and secure key management into one flexible SDK.",
+      "url": "https://www.dynamic.xyz/",
+      "tags": []
+    },
+    {
+      "name": "Eco",
+      "description": "Connects digital asset markets through stablecoins and moves money across onchain markets and tokenization platforms.",
+      "url": "https://www.eco.com",
+      "tags": []
+    },
+    {
+      "name": "edgeX",
+      "description": "edgeX is a decentralized trading platform for perpetual futures (commodities, stocks, and crypto) and spot markets.",
+      "url": "https://pro.edgex.exchange/en-US/home",
+      "tags": []
+    },
+    {
+      "name": "Elliptic",
+      "description": "Blockchain analytics for financial crime risk management and regulatory compliance in crypto and digital assets.",
+      "url": "https://www.elliptic.co/",
+      "tags": [
+        "Analytics"
+      ]
+    },
+    {
+      "name": "ether.fi",
+      "description": "ether.fi is one account for your money. Hold, earn, borrow, spend, trade, and send crypto, tokenized stocks, and metals.",
+      "url": "https://www.ether.fi/",
+      "tags": []
+    },
+    {
+      "name": "Exodus",
+      "description": "Exodus makes it easy to buy and sell crypto using your credit or debit card, bank account, Apple Pay, or Google Pay.",
+      "url": "https://www.exodus.com",
+      "tags": []
+    },
+    {
+      "name": "Extended",
+      "description": "Extended replaces siloed markets with a unified margin system, enabling users to trade crypto and TradFi.",
+      "url": "https://extended.exchange/",
+      "tags": []
+    },
+    {
+      "name": "Fast",
+      "description": "Fast is the payments infrastructure for AI agents — instant, programmable, and built for the agentic economy.",
+      "url": "https://fast.xyz/",
+      "tags": []
+    },
+    {
+      "name": "FAZE",
+      "description": "A Uniswap v4-native memecoin and token launchpad built on the Arc chain.",
+      "url": "https://faze.fun",
+      "tags": []
+    },
+    {
+      "name": "Figment",
+      "description": "Figment is an independent, non-custodial staking infrastructure and validator provider for institutional crypto investors.",
+      "url": "https://figment.io",
+      "tags": [
+        "Validators"
+      ]
+    },
+    {
+      "name": "Fireblocks",
+      "description": "Fireblocks offers enterprise grade digital asset and stablecoin infrastructure that powers financial possibility.",
+      "url": "https://fireblocks.com/",
+      "tags": []
+    },
+    {
+      "name": "Fluid",
+      "description": "Fluid makes lending and borrowing on DeFi easier, safer, and more efficient.",
+      "url": "https://fluid.io/",
+      "tags": []
+    },
+    {
+      "name": "fomo",
+      "description": "fomo is the ultimate cross-chain trading app. Trade any asset across supported chains in one click without bridging.",
+      "url": "https://fomo.family/",
+      "tags": []
+    },
+    {
+      "name": "Fordefi",
+      "description": "Fordefi is an institutional-grade multi-party computation (MPC) crypto wallet and security platform built for DeFi.",
+      "url": "https://fordefi.com/",
+      "tags": []
+    },
+    {
+      "name": "Forte AUD",
+      "description": "AUDF provides simple, fast, and cost-effective access to cryptocurrency via a digital asset pegged to the Australian dollar.",
+      "url": "https://www.forteaud.com/",
+      "tags": [
+        "Stablecoin Issuers"
+      ]
+    },
+    {
+      "name": "Forte Securities",
+      "description": "Forte Securities is an independent and global financial group offering brokerage, custody and asset management.",
+      "url": "https://fortesecurities.com/",
+      "tags": []
+    },
+    {
+      "name": "Fun.xyz",
+      "description": "Fun offers high converting rails to execute blockchain actions. Optimize your funding rails, reach new customers, and more.",
+      "url": "https://fun.xyz",
+      "tags": []
+    },
+    {
+      "name": "Galaxy",
+      "description": "Galaxy is a global leader in digital assets and AI infrastructure, serves institutions, startups, protocols, and investors.",
+      "url": "https://www.galaxy.com/",
+      "tags": []
+    },
+    {
+      "name": "Gate",
+      "description": "Gate is a US-based crypto exchange that enables users to trade, spot, convert, and earn.",
+      "url": "https://www.gate.com/",
+      "tags": []
+    },
+    {
+      "name": "Gauntlet",
+      "description": "Gauntlet is a yield curator, delivering data-driven strategies for capital allocators, fintechs, institutions, and more.",
+      "url": "https://gauntlet.network",
+      "tags": []
+    },
+    {
+      "name": "Goldsky",
+      "description": "The data and automation platform for financial products built on stablecoins.",
+      "url": "https://goldsky.com/",
+      "tags": [
+        "Analytics",
+        "RPC Providers"
+      ]
+    },
+    {
+      "name": "Hashkey",
+      "description": "HashKey Global is licensed by the Bermuda Monetary Authority (BMA), ensuring a secure and compliant trading environment.",
+      "url": "https://www.hashkey.com/en-US/",
+      "tags": []
+    }
+  ],
+  "posts": [
+    {
+      "title": "Build a Consumer Bitcoin App with Arc Studio's Uniswap Skill",
+      "url": "https://www.arc.io/blog/build-a-consumer-bitcoin-app-with-arc-studios-uniswap-skill",
+      "topic": "Developer insights",
+      "publishedAt": "2026-11-18T15:51:28.765Z"
+    },
+    {
+      "title": "Indexing and Simulating Arc Correctly",
+      "url": "https://www.arc.io/blog/indexing-and-simulating-arc-correctly",
+      "topic": "Developer insights",
+      "publishedAt": "2026-11-17T19:15:56.007Z"
+    },
+    {
+      "title": "Build Settlement on Arc With Reduced Crosschain Fees",
+      "url": "https://www.arc.io/blog/build-settlement-on-arc-with-reduced-crosschain-fees",
+      "topic": "Arc updates",
+      "publishedAt": "2026-11-17T19:15:56.007Z"
+    },
+    {
+      "title": "Why Aave Is Building its Next Generation of Markets on Arc",
+      "url": "https://www.arc.io/blog/why-aave-is-building-its-next-generation-of-markets-on-arc",
+      "topic": "Partner spotlights",
+      "publishedAt": "2026-11-17T19:15:56.007Z"
+    },
+    {
+      "title": "Arc Studio CLI: Build Onchain from Your Coding Agent",
+      "url": "https://www.arc.io/blog/arc-studio-cli-build-onchain-from-your-coding-agent",
+      "topic": "Developer insights",
+      "publishedAt": "2026-11-12T14:21:41.096Z"
+    },
+    {
+      "title": "How Arc Supports Onchain Trading and DEX Infrastructure | Arc Blueprints",
+      "url": "https://www.arc.io/blog/how-arc-supports-onchain-trading-and-dex-infrastructure-arc-blueprints",
+      "topic": "Use cases",
+      "publishedAt": "2026-10-29T21:34:04.560Z"
+    },
+    {
+      "title": "Porting Contracts to Arc: Native Value Rules and Key Implementation Differences",
+      "url": "https://www.arc.io/blog/porting-contracts-to-arc-native-value-rules-and-key-implementation-differences",
+      "topic": "Developer insights",
+      "publishedAt": "2026-10-29T21:34:04.560Z"
+    },
+    {
+      "title": "How Crossmint Supports Stablecoin Apps and the Agentic Economy on Arc",
+      "url": "https://www.arc.io/blog/how-crossmint-supports-stablecoin-apps-and-the-agentic-economy-on-arc",
+      "topic": "Partner spotlights",
+      "publishedAt": "2026-10-21T22:55:50.831Z"
+    },
+    {
+      "title": "Integrating Arc for Deposits and Withdrawals",
+      "url": "https://www.arc.io/blog/integrating-arc-for-deposits-and-withdrawals",
+      "topic": "Developer insights",
+      "publishedAt": "2026-10-21T22:55:50.831Z"
+    },
+    {
+      "title": "How SELAT Uses Circle Gateway to Make Arc the Home Treasury for Every Agent",
+      "url": "https://www.arc.io/blog/how-selat-uses-circle-gateway-to-make-arc-the-home-treasury-for-every-agent",
+      "topic": "Partner spotlights",
+      "publishedAt": "2026-10-21T22:55:50.831Z"
+    },
+    {
+      "title": "How Earn Kit Keeps USDC in Arc Apps Productive with Morpho Vaults",
+      "url": "https://www.arc.io/blog/how-earn-kit-keeps-usdc-in-arc-apps-productive-with-morpho-vaults",
+      "topic": "Partner spotlights",
+      "publishedAt": "2026-10-21T22:55:50.831Z"
+    },
+    {
+      "title": "How Pulsar Is Building a Cross-Border Money Experience With Arc",
+      "url": "https://www.arc.io/blog/how-pulsar-is-building-a-cross-border-money-experience-with-arc",
+      "topic": "Partner spotlights",
+      "publishedAt": "2026-10-07T18:41:43.067Z"
+    }
+  ],
+  "docs": {
+    "overview": [
+      {
+        "title": "Stablecoin native model",
+        "summary": "Arc is built around stablecoins as first-class assets, with USDC as the native gas token, EURC for euro-denominated transfers, and USYC for yield-bearing use cases.",
+        "url": "https://docs.arc.io/arc/concepts/stablecoin-native-model"
+      },
+      {
+        "title": "Stable fee design",
+        "summary": "Arc's fee market uses EWMA-smoothed base fees denominated in USDC and minimal priority fees, keeping transaction costs predictable and resistant to short-term demand spikes.",
+        "url": "https://docs.arc.io/arc/concepts/stable-fee-design"
+      },
+      {
+        "title": "Deterministic finality and settlement",
+        "summary": "Arc's deterministic finality delivers irreversible transaction settlement in under one second.",
+        "url": "https://docs.arc.io/arc/concepts/deterministic-finality"
+      },
+      {
+        "title": "System overview",
+        "summary": "Arc separates consensus from execution across two layers: Malachite orders and finalizes blocks, Reth processes transactions and maintains state.",
+        "url": "https://docs.arc.io/arc/concepts/system-overview"
+      },
+      {
+        "title": "Opt-in privacy",
+        "summary": "Arc Privacy Sector (APS) is Arc's confidential execution environment for Solidity contracts, running alongside the public EVM with synchronous composability and default-deny contract isolation.",
+        "url": "https://docs.arc.io/arc/concepts/opt-in-privacy"
+      },
+      {
+        "title": "Post-quantum security",
+        "summary": "Arc's post-quantum roadmap covers wallet signatures, validator authentication, private state, and supporting infrastructure against quantum-era attacks.",
+        "url": "https://docs.arc.io/arc/concepts/post-quantum-security"
+      }
+    ],
+    "network": [
+      {
+        "title": "Connect to Arc",
+        "summary": "Set up your wallet and configure your development environment for Arc.",
+        "url": "https://docs.arc.io/arc/references/connect-to-arc"
+      },
+      {
+        "title": "RPC endpoints",
+        "summary": "RPC endpoints, network parameters, and node provider options for connecting to Arc mainnet and testnet.",
+        "url": "https://docs.arc.io/arc/references/rpc-endpoints"
+      },
+      {
+        "title": "Contract addresses",
+        "summary": "Arc mainnet and testnet contract addresses for stablecoins, CCTP, Gateway, StableFX, ERC-8004, and more. Includes the ERC-8183 testnet address.",
+        "url": "https://docs.arc.io/arc/references/contract-addresses"
+      },
+      {
+        "title": "Gas and fees",
+        "summary": "Runtime parameters for Arc gas pricing, including base fee bounds, EWMA smoothing, and best practices for submitting transactions.",
+        "url": "https://docs.arc.io/arc/references/gas-and-fees"
+      },
+      {
+        "title": "EVM differences",
+        "summary": "Arc's protocol-level differences from Ethereum: USDC as native gas, value transfer rules, SELFDESTRUCT semantics, EIP-7708 Transfer events, the fee market, and opcode behavior.",
+        "url": "https://docs.arc.io/arc/references/evm-differences"
+      }
+    ],
+    "developer": [
+      {
+        "title": "Deploy on Arc",
+        "summary": "Deploy and interact with a Solidity smart contract on Arc Testnet using Arc Foundry.",
+        "url": "https://docs.arc.io/arc/tutorials/deploy-on-arc"
+      },
+      {
+        "title": "Deploy contracts",
+        "summary": "Deploy pre-audited smart contract templates on Arc with Circle Contracts.",
+        "url": "https://docs.arc.io/arc/tutorials/deploy-contracts"
+      },
+      {
+        "title": "Sample apps",
+        "summary": "Open-source reference applications for building on Arc with Circle developer tools, including payment flows, stablecoin FX, DeFi protocols, multichain wallets, and treasury management.",
+        "url": "https://docs.arc.io/arc/references/sample-applications"
+      },
+      {
+        "title": "Monitor contract events",
+        "summary": "Track onchain activity by monitoring contract events.",
+        "url": "https://docs.arc.io/arc/tutorials/monitor-contract-events"
+      },
+      {
+        "title": "Send USDC with a transaction memo",
+        "summary": "Attach memo metadata to a USDC transfer on Arc Testnet and query the emitted Memo events.",
+        "url": "https://docs.arc.io/arc/tutorials/send-usdc-with-transaction-memo"
+      },
+      {
+        "title": "Arc MCP server",
+        "summary": "Connect your AI coding tools to Arc documentation using the Model Context Protocol (MCP) server for search and full-page retrieval.",
+        "url": "https://docs.arc.io/ai/mcp"
+      }
+    ],
+    "tools": [
+      {
+        "title": "Account abstraction",
+        "summary": "Account abstraction providers on Arc, offering SDKs, paymasters, and smart wallet infrastructure for building flexible AA flows.",
+        "url": "https://docs.arc.io/arc/tools/account-abstraction"
+      },
+      {
+        "title": "Compliance",
+        "summary": "Compliance providers offering analytics, wallet screening, and monitoring tools for Arc applications.",
+        "url": "https://docs.arc.io/arc/tools/compliance-vendors"
+      },
+      {
+        "title": "Data indexers",
+        "summary": "Data indexers for querying Arc blockchain data through APIs, sub-graphs, and real-time streams.",
+        "url": "https://docs.arc.io/arc/tools/data-indexers"
+      },
+      {
+        "title": "Node providers",
+        "summary": "Node providers for reliable RPC access, transaction submission, and data queries on Arc.",
+        "url": "https://docs.arc.io/arc/tools/node-providers"
+      }
+    ]
+  },
+  "tools": [
+    {
+      "id": "node-providers",
+      "group": "Infrastructure",
+      "title": "Node providers",
+      "url": "https://docs.arc.io/arc/tools/node-providers",
+      "providers": [
+        {
+          "name": "Alchemy",
+          "url": "https://www.alchemy.com/arc",
+          "description": "Institutional-grade developer platform powering RPC, Data APIs, real-time webhooks, and Wallet APIs for Arc."
+        },
+        {
+          "name": "Blockdaemon",
+          "url": "https://www.blockdaemon.com/protocols/arc",
+          "description": "Institutional-grade node provider offering secure and compliant infrastructure for Arc and other EVM chains."
+        },
+        {
+          "name": "dRPC",
+          "url": "https://drpc.org/chainlist/arc-testnet-rpc",
+          "description": "RPC aggregator providing high-speed, load-balanced access to Arc nodes through a multi-provider architecture."
+        },
+        {
+          "name": "Goldsky",
+          "url": "https://goldsky.com/chains/arc",
+          "description": "Low-latency RPCs for Arc over a global edge network with 99.9% uptime and automatic failover. Payable per request in USDC with [x402 Nanopayments](https://docs.goldsky.com/edge-rpc/capabilities/x402)."
+        },
+        {
+          "name": "QuickNode",
+          "url": "https://www.quicknode.com/chains/arc",
+          "description": "High-performance blockchain infrastructure offering global endpoints and APIs for developers. > [!NOTE] > > You can connect directly to Arc's public RPC endpoint or through any of these > infrastructure partners using your preferred SDK or web3 client. > [!TIP] > > You can also [run your own node](https://docs.arc.io/arc/concepts/running-a-node.md) for independent > verification and direct RPC access without third-party dependencies."
+        }
+      ]
+    },
+    {
+      "id": "data-indexers",
+      "group": "Infrastructure",
+      "title": "Data indexers",
+      "url": "https://docs.arc.io/arc/tools/data-indexers",
+      "providers": [
+        {
+          "name": "Alchemy",
+          "url": "https://www.alchemy.com/arc",
+          "description": "REST API infrastructure for querying Arc token balances, transfers, and transaction history, plus webhooks to stream onchain events in real time."
+        },
+        {
+          "name": "Envio",
+          "url": "https://envio.dev",
+          "description": "Developer-first indexing framework for event-driven data and GraphQL APIs on Arc."
+        },
+        {
+          "name": "Goldsky",
+          "url": "https://goldsky.com/chains/arc",
+          "description": "Real-time onchain data pipelines and instant GraphQL APIs for Arc."
+        },
+        {
+          "name": "Pinax",
+          "url": "https://pinax.network",
+          "description": "Blockchain data infrastructure for querying real-time and historical Arc data."
+        },
+        {
+          "name": "The Graph",
+          "url": "https://thegraph.com",
+          "description": "Decentralized indexing protocol for querying Arc's onchain data through APIs."
+        },
+        {
+          "name": "Thirdweb",
+          "url": "https://thirdweb.com",
+          "description": "Open-source blockchain data tooling."
+        },
+        {
+          "name": "Zerion",
+          "url": "https://zerion.io/api",
+          "description": "Wallet data platform for querying portfolio, transaction, and DeFi position data on Arc."
+        }
+      ]
+    },
+    {
+      "id": "account-abstraction",
+      "group": "Wallets and account abstraction",
+      "title": "Account abstraction",
+      "url": "https://docs.arc.io/arc/tools/account-abstraction",
+      "providers": [
+        {
+          "name": "Alchemy",
+          "url": "https://www.alchemy.com/arc",
+          "description": "Wallet APIs, a production bundler, and gas sponsorship so users can transact without holding gas tokens."
+        },
+        {
+          "name": "Biconomy",
+          "url": "https://www.biconomy.io",
+          "description": "Account abstraction toolkit offering modular smart accounts, paymasters, and bundlers as a service to simplify the user experience."
+        },
+        {
+          "name": "Blockradar",
+          "url": "https://blockradar.co",
+          "description": "Infrastructure and APIs for smart account management and transaction bundling, enabling scalable AA flows with minimal setup."
+        },
+        {
+          "name": "Circle Wallets",
+          "url": "https://developers.circle.com/wallets",
+          "description": "End-to-end platform for creating and managing secure Arc wallets and cryptographic keys. Supports ERC-20, ERC-721, and ERC-1155 standards."
+        },
+        {
+          "name": "Crossmint",
+          "url": "https://www.crossmint.com",
+          "description": "Wallet-as-a-service and AA capabilities to onboard users with email or OAuth-based accounts."
+        },
+        {
+          "name": "Dynamic",
+          "url": "https://www.dynamic.xyz",
+          "description": "Identity and wallet orchestration platform with native ERC-4337 support, enabling passkey wallets and flexible signer management."
+        },
+        {
+          "name": "MetaMask Embedded Wallets",
+          "url": "https://docs.metamask.io/embedded-wallets/",
+          "description": "Embedded wallet infrastructure with social login and multi-party computation (MPC) key management, plus smart accounts with managed bundlers and paymasters."
+        },
+        {
+          "name": "Para",
+          "url": "https://getpara.com",
+          "description": "Wallet and authentication suite for fintech and crypto applications, enabling flexible wallet management and transaction signing."
+        },
+        {
+          "name": "Pimlico",
+          "url": "https://pimlico.io",
+          "description": "Bundler and paymaster infrastructure for ERC-4337 smart accounts, offering sponsored transactions and reliable relay services."
+        },
+        {
+          "name": "Privy",
+          "url": "https://www.privy.io",
+          "description": "APIs and SDKs for embedded wallets and user authentication. Onboard users with email or social logins while maintaining full control over key management."
+        },
+        {
+          "name": "Thirdweb",
+          "url": "https://portal.thirdweb.com/wallets",
+          "description": "Full-stack toolkit with built-in AA support, SDKs, and a managed smart wallet layer."
+        },
+        {
+          "name": "Turnkey",
+          "url": "https://docs.turnkey.com/reference/aa-wallets",
+          "description": "Programmable key infrastructure for embedded wallets, transaction signing, and onchain automation with policy-based controls."
+        },
+        {
+          "name": "Zerodev",
+          "url": "https://zerodev.app",
+          "description": "Developer SDK for deploying and managing ERC-4337 smart accounts, with built-in session key and bundler support. > [!NOTE] > > Arc's account abstraction ecosystem is modular—you can mix SDKs, paymasters, > and bundlers from multiple providers to design your smart account > architecture."
+        }
+      ]
+    },
+    {
+      "id": "compliance-vendors",
+      "group": "Compliance",
+      "title": "Compliance",
+      "url": "https://docs.arc.io/arc/tools/compliance-vendors",
+      "providers": [
+        {
+          "name": "Chainalysis",
+          "url": "https://www.chainalysis.com",
+          "description": "Blockchain data platform offering transaction monitoring, address screening, and investigation tools to support AML, sanctions, and fraud-detection programs."
+        },
+        {
+          "name": "Elliptic",
+          "url": "https://www.elliptic.co",
+          "description": "Blockchain analytics and transaction monitoring APIs to identify illicit activity, assess risk exposure, and ensure compliance with AML and sanctions requirements."
+        },
+        {
+          "name": "TRM Labs",
+          "url": "https://www.trmlabs.com",
+          "description": "Risk intelligence, wallet screening, and real-time monitoring tools to detect fraud, money laundering, and other suspicious behavior across Arc transactions."
+        }
+      ]
+    }
+  ]
+}

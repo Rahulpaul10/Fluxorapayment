@@ -18,9 +18,14 @@ const card = 'glass tap flex min-h-[88px] flex-col justify-between gap-2 rounded
 export function ExploreArc({ navigate }: { navigate: (view: View, search?: string) => void }) {
   return (
     <section aria-labelledby="explore-arc">
-      <h2 id="explore-arc" className="label mb-2 px-1">
-        Explore Arc
-      </h2>
+      <div className="mb-1 flex items-center justify-between px-1">
+        <h2 id="explore-arc" className="label">
+          Explore Arc
+        </h2>
+        <button type="button" onClick={() => navigate('explore')} className="min-h-[44px] px-1 text-xs font-semibold text-[var(--a)] underline underline-offset-2">
+          Explore all
+        </button>
+      </div>
       <ul className="grid grid-cols-2 gap-2.5">
         {ITEMS.map((i) => {
           const body = (

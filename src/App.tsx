@@ -21,6 +21,7 @@ const History = lazy(viewLoaders.history)
 const Settings = lazy(viewLoaders.settings)
 const Asset = lazy(viewLoaders.asset)
 const Analytics = lazy(viewLoaders.analytics)
+const Explore = lazy(viewLoaders.explore)
 const TxDetails = lazy(viewLoaders.tx)
 const BridgeHistory = lazy(viewLoaders.bridges)
 
@@ -39,6 +40,7 @@ const Outlet = memo(function Outlet({ view, params, navigate }: Pick<RouteView, 
       {view === 'history' && <History navigate={navigate} />}
       {view === 'settings' && <Settings navigate={navigate} />}
       {view === 'asset' && <Asset symbol={params.get('token') ?? undefined} navigate={navigate} />}
+      {view === 'explore' && <Explore navigate={navigate} />}
       {view === 'analytics' && <Analytics navigate={navigate} />}
       {view === 'tx' && <TxDetails hash={params.get('hash')} chainParam={params.get('chain')} navigate={navigate} />}
       {view === 'bridges' && <BridgeHistory navigate={navigate} />}
@@ -55,7 +57,7 @@ export default function App() {
   const switching = shownView !== view
 
   useEffect(() => {
-    const titles: Record<string, string> = { dashboard: 'Dashboard', send: 'Send', receive: 'Receive', swap: 'Swap', bridge: 'Bridge', pay: 'Pay', history: 'History', settings: 'Settings', asset: 'Asset', analytics: 'Analytics', tx: 'Transaction', bridges: 'Bridge history' }
+    const titles: Record<string, string> = { dashboard: 'Dashboard', send: 'Send', receive: 'Receive', swap: 'Swap', bridge: 'Bridge', pay: 'Pay', history: 'History', settings: 'Settings', asset: 'Asset', analytics: 'Analytics', tx: 'Transaction', bridges: 'Bridge history', explore: 'Explore Arc' }
     document.title = `${titles[view]} · FLUXORA`
   }, [view])
 

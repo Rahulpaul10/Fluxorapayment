@@ -1,3 +1,4 @@
+import { lazy, Suspense } from 'react'
 import { ArrowDownToLine, ArrowLeftRight, ArrowUpRight, Landmark } from 'lucide-react'
 import { useAccount } from 'wagmi'
 import { useValuedBalances } from '@/hooks/useValuedBalances'
@@ -5,7 +6,7 @@ import { useHistoryRows } from '@/hooks/useHistoryRows'
 import { useArcWallet } from '@/hooks/useWallet'
 import { fmtUsd } from '@/lib/format'
 import { USDC } from '@/lib/tokens'
-import { prefetchView } from '@/lib/viewLoaders'
+import { prefetchView, viewLoaders } from '@/lib/viewLoaders'
 import type { View } from '@/lib/router'
 import { Card, ExplorerLink, Notice } from '@/components/ui'
 import { WalletIdentity } from '@/components/WalletIdentity'
@@ -14,8 +15,6 @@ import { ArcNetworkCard, GasInsight } from '@/components/ArcStatusCards'
 import { ActivityTimeline } from '@/components/ActivityTimeline'
 import { ExploreArc } from '@/components/ExploreArc'
 import { ARC_CHAIN_ID, explorerAddress } from '@/config/networks'
-import { ConnectPanel } from '@/components/Gate'
-import { Wordmark } from '@/components/Logo'
 
 const ACTIONS: { view: View; label: string; icon: typeof ArrowUpRight }[] = [
   { view: 'send', label: 'Send', icon: ArrowUpRight },
@@ -24,21 +23,7 @@ const ACTIONS: { view: View; label: string; icon: typeof ArrowUpRight }[] = [
   { view: 'bridge', label: 'Bridge', icon: Landmark },
 ]
 
-function Landing() {
-  return (
-    <div className="mx-auto max-w-md space-y-6 pt-4 text-center">
-      <Wordmark size={40} className="mx-auto" />
-      <div>
-        <h1 className="text-balance font-display text-3xl font-bold tracking-[-0.03em] text-white sm:text-4xl">One Wallet. Every Possibility.</h1>
-        <p className="mt-3 text-pretty text-sm text-slate-400">Send, receive, swap and bridge USDC on Arc. Real balances and real transactions. Your keys never leave your wallet.</p>
-      </div>
-      <div className="text-left">
-        <ConnectPanel />
-      </div>
-      <p className="text-xs text-slate-500">Arc mainnet moves real funds. Transactions cannot be reversed.</p>
-    </div>
-  )
-}
+const Explore = lazy(viewLoaders.explore)
 
 export function Dashboard({ navigate }: { navigate: (v: View, search?: string) => void }) {
   const { isConnected, address } = useAccount()
@@ -46,7 +31,14 @@ export function Dashboard({ navigate }: { navigate: (v: View, search?: string) =
   const { rows: assets, total, unpriced, unreadable, loading, pricesLoading, refetch: refetchBalances } = useValuedBalances()
   const { rows, transfers } = useHistoryRows()
 
-  if (!isConnected || !address) return <Landing />
+  // No separate connect screen: until a wallet is connected the home page is Explore Arc. The wallet connects from the top bar on every page.
+  if (!isConnected || !address) {
+    return (
+      <Suspense fallback={<div className="mx-auto max-w-5xl space-y-4" aria-busy="true"><div className="skeleton h-64 rounded-3xl" /><div className="skeleton h-40 rounded-3xl" /></div>}>
+        <Explore navigate={navigate} />
+      </Suspense>
+    )
+  }
 
   return (
     <div className="mx-auto max-w-2xl space-y-4">

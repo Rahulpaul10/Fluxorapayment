@@ -35,6 +35,8 @@
     "test:production": "bun run scripts/test-production.ts",
     "test:features": "bun run scripts/test-features.tsx",
     "test:cctp-fees": "bun run scripts/test-cctp-fees.ts",
+    "content:refresh": "bun run scripts/refresh-arc-content.ts",
+    "test:explore": "bun run scripts/test-explore.tsx",
     "test:circle": "bun run scripts/test-circle.ts",
     "test:circle-ui": "bun run scripts/test-circle-ui.tsx"
   },

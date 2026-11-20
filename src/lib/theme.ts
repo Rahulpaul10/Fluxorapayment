@@ -1,5 +1,5 @@
 import { createContext, useContext } from 'react'
-import { ArrowDownToLine, ArrowLeftRight, ArrowUpRight, Landmark, LayoutDashboard, Receipt, ScrollText, Settings, Coins } from 'lucide-react'
+import { Compass, ArrowDownToLine, ArrowLeftRight, ArrowUpRight, Landmark, LayoutDashboard, Receipt, ScrollText, Settings, Coins } from 'lucide-react'
 import type { View } from './router'
 
 /** Per-page color theme. The colors themselves live in index.css under [data-theme]. */
@@ -18,6 +18,7 @@ export const VIEW_THEMES: Record<View, ViewTheme> = {
   swap: { label: 'Swap', icon: ArrowLeftRight, gradient: 'linear-gradient(135deg,#27D9FF,#8257FF)', blurb: 'Trade at live pool prices' },
   bridge: { label: 'Bridge', icon: Landmark, gradient: 'linear-gradient(135deg,#8257FF,#20D6A0)', blurb: 'Move USDC across networks' },
   pay: { label: 'Pay', icon: Receipt, gradient: 'linear-gradient(135deg,#FF55B8,#FFB04D)', blurb: 'Request, collect and receipt payments' },
+  explore: { label: 'Explore', icon: Compass, gradient: 'linear-gradient(135deg,#8257FF,#27D9FF)', blurb: 'Arc, its ecosystem and the latest news' },
   analytics: { label: 'Analytics', icon: Coins, gradient: 'linear-gradient(135deg,#8257FF,#27D9FF)', blurb: 'Portfolio numbers from Arc' },
   tx: { label: 'Transaction', icon: Coins, gradient: 'linear-gradient(135deg,#8257FF,#27D9FF)', blurb: 'One transaction, from the chain' },
   bridges: { label: 'Bridge history', icon: Coins, gradient: 'linear-gradient(135deg,#8257FF,#27D9FF)', blurb: 'CCTP transfers, verified' },

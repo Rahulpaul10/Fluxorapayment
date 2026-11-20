@@ -10,7 +10,7 @@ import { NetworkBanner } from './NetworkBanner'
 import { prefetchView } from '@/lib/viewLoaders'
 
 /** The desktop sidebar's pages (phones use the dashboard's quick actions). History opens from the dashboard; Pay still opens from a /pay link. */
-const NAV: View[] = ['send', 'receive', 'swap', 'bridge']
+const NAV: View[] = ['send', 'receive', 'swap', 'bridge', 'explore']
 
 const NavButton = memo(function NavButton({ view, active, onClick }: { view: View; active: boolean; onClick: (v: View) => void }) {
   const t = VIEW_THEMES[view]

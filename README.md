@@ -11,6 +11,7 @@ Built with [Arc Studio](https://studio.arc.io)
 | Feature | Status |
 | --- | --- |
 | Wallet connection (MetaMask, WalletConnect with a project id), network switching, RPC status | Live |
+| Explore Arc (the home page until a wallet connects, and /explore): what Arc is, live network status and block, the ecosystem partners Arc lists, developer docs, and the latest Arc blog posts. Live data is labelled Live; saved copies show where they came from and when | Live network data plus a saved copy of Arc's own pages (`bun run content:refresh`) |
 | Dashboard: total balance, wallet identity with Copy and QR, asset cards with Send, Swap and Bridge shortcuts, Arc Network status (block, gas token), Gas Insight from your real receipts, activity timeline, Explore Arc links | Live, real chain data |
 | Transaction details, Bridge history (CCTP, verified against Circle and the destination chain), Analytics, Address book, History filters, Onchain details switch (Settings) | Live, real chain data |
 | Asset page: balance, USD value, contract address, token activity, Arc Explorer link | Live, real chain data |
@@ -48,6 +49,8 @@ bun run test:send           # Send gas reserve: Max, near-full-balance and insuf
 bun run test:account        # wallet account consistency: shown account, transaction sender and wallet account must match (no network)
 bun run test:bridge         # bridge fee math, failure explanations, Retry gate and CCTP configuration (reads Arc)
 bun run test:bridge-ui      # the Bridge page with a stand-in for Circle's kit: small amounts, failures, Retry
+bun run content:refresh    # re-read Arc's ecosystem page, blog and docs into src/content/arc-content.json (needs internet)
+bun run test:explore       # Explore Arc: saved content vs Arc's live pages, the page with and without a wallet
 bun run test:circle        # Circle's docs, the bridge kit and Arc agree (CCTP V2 contracts, domains, USDC, compliance reads); read only
 bun run test:circle-ui     # USDC blocklist check and delivery verification in the real pages (fake wallet, nothing sent)
 bun run test:cctp-fees     # Arc to Ethereum quote flow checked against Circle's fee service (read only, sends nothing)

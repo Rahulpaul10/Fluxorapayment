@@ -52,6 +52,7 @@ export const viewLoaders = {
   history: resilient(() => import('@/pages/History').then((m) => ({ default: m.History }))),
   settings: resilient(() => import('@/pages/Settings').then((m) => ({ default: m.Settings }))),
   asset: resilient(() => import('@/pages/Asset').then((m) => ({ default: m.Asset }))),
+  explore: resilient(() => import('@/pages/Explore').then((m) => ({ default: m.Explore }))),
   analytics: resilient(() => import('@/pages/Analytics').then((m) => ({ default: m.Analytics }))),
   tx: resilient(() => import('@/pages/TxDetails').then((m) => ({ default: m.TxDetails }))),
   bridges: resilient(() => import('@/pages/BridgeHistory').then((m) => ({ default: m.BridgeHistory }))),
@@ -71,7 +72,7 @@ export function prefetchView(view: View): void {
   if (key === 'bridge') void import('./bridgeKit').then((m) => m.preloadBridgeKit())
 }
 
-const ORDER: LazyView[] = ['send', 'swap', 'receive', 'pay', 'history', 'bridge', 'settings', 'asset', 'analytics', 'tx', 'bridges']
+const ORDER: LazyView[] = ['send', 'swap', 'receive', 'pay', 'history', 'bridge', 'settings', 'asset', 'analytics', 'tx', 'bridges', 'explore']
 
 /** After the first screen is interactive, warm the remaining pages one at a time while the browser is idle. */
 export function prefetchAllViewsWhenIdle(): () => void {
